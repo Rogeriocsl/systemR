@@ -1,0 +1,10 @@
+Instalar o Electron Packager:
+
+bash
+Copiar código
+npm install electron-packager --save-dev
+Empacotar a aplicação:
+
+bash
+Copiar código
+npx electron-packager . meu-projeto --platform=win32 --arch=x64
