@@ -1,0 +1,69 @@
+/* Estilos globais */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f6f9; /* Cor de fundo neutra e clara */
+    color: #333; /* Texto escuro para legibilidade */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    height: 100vh;
+    transition: background-color 0.3s, color 0.3s; /* Transição suave */
+}
+
+/* Título */
+h2 {
+    color: #2c3e50; /* Azul escuro para o título */
+    font-size: 24px;
+    font-weight: 600;
+    text-align: center;
+}
+
+/* Menu Container */
+.menu-container {
+    text-align: center;
+    margin-top: 20px;
+}
+
+/* Menu principal */
+.menu {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* Exibe 3 itens por linha */
+    gap: 20px;
+    justify-items: center;
+    margin-top: 30px;
+}
+
+/* Itens do menu */
+.menu-item {
+    background-color: #ffffff; /* Fundo branco */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+    width: 200px;
+    text-align: center;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.menu-item:hover {
+    background-color: #2980b9; /* Azul claro no hover */
+    color: #fff;
+    transform: scale(1.05); /* Efeito de ampliação */
+}
+
+.menu-item i {
+    font-size: 40px;
+    margin-bottom: 10px;
+}
+
+.menu-item p {
+    font-size: 16px;
+    font-weight: 500;
+}
+
+/* Adicionando estilo para o texto abaixo do título */
+p {
+    color: #555;
+}
