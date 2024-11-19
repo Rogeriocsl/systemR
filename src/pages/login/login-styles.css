@@ -1,10 +1,10 @@
 /* Estilos globais */
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #e02d2d; /* Cor padrão (Modo Claro) */
-    color: #fff;
+    background-color: #f4f6f9; /* Cor de fundo neutra e clara por padrão */
+    color: #333; /* Texto escuro para legibilidade */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -14,38 +14,40 @@ body {
 
 /* Modo Claro */
 body.light-mode {
-    background-color: #f2f2f2; /* Cor de fundo mais clara */
-    color: #000; /* Cor do texto mais escura */
+    background-color: #f4f6f9; /* Cor de fundo mais clara */
+    color: #333; /* Cor do texto escuro */
 }
 
 /* Modo Escuro */
 body.dark-mode {
-    background-color: #1e3a5f; /* Azul escuro */
-    color: #fff; /* Cor do texto branca */
+    background-color: #2c3e50; /* Azul escuro suave */
+    color: #ecf0f1; /* Texto claro para contraste */
 }
 
 /* Estilo do container */
 .login-container {
-    background-color: #1e3a5f; /* Azul escuro */
-    padding: 20px 30px;
-    border-radius: 10px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
+    background-color: #ffffff; /* Branco para contraste */
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1); /* Sombra suave */
     width: 100%;
-    max-width: 400px;
+    max-width: 380px;
     text-align: center;
     transition: background-color 0.3s;
 }
 
 /* Container no Modo Claro */
 body.light-mode .login-container {
-    background-color: #fff; /* Branco para modo claro */
-    color: #000;
+    background-color: #ffffff; /* Branco para o modo claro */
+    color: #333;
 }
 
 /* Título */
 .login-container h2 {
     margin-bottom: 20px;
-    color: #fff;
+    color: #2c3e50; /* Azul escuro para o título */
+    font-size: 24px;
+    font-weight: 600;
 }
 
 /* Estilo do formulário */
@@ -58,31 +60,40 @@ body.light-mode .login-container {
 .login-container input[type="email"],
 .login-container input[type="password"] {
     margin-bottom: 15px;
-    padding: 10px;
-    border: 1px solid #ccc;
+    padding: 12px;
+    border: 1px solid #dcdfe3; /* Cor neutra de borda */
     border-radius: 5px;
     font-size: 16px;
+    color: #333;
+    background-color: #f9f9f9; /* Fundo claro para inputs */
+    transition: border-color 0.3s;
+}
+
+.login-container input[type="email"]:focus,
+.login-container input[type="password"]:focus {
+    border-color: #2980b9; /* Azul claro ao focar */
+    outline: none;
 }
 
 /* Checkbox */
 .login-container .checkbox-container {
     display: flex;
     align-items: center;
-    margin-bottom: 15px;
-    color: #fff;
+    margin-bottom: 20px;
+    color: #333;
     font-size: 14px;
 }
 
 .login-container .checkbox-container input {
-    margin-right: 5px;
+    margin-right: 8px;
 }
 
 /* Botão */
 .login-container button {
-    background-color: #00509e; /* Azul forte */
+    background-color: #2980b9; /* Azul forte */
     color: #fff;
     border: none;
-    padding: 10px;
+    padding: 12px;
     border-radius: 5px;
     font-size: 16px;
     cursor: pointer;
@@ -90,12 +101,17 @@ body.light-mode .login-container {
 }
 
 .login-container button:hover {
-    background-color: #003f7d; /* Azul ainda mais escuro */
+    background-color: #1c5d84; /* Azul mais escuro no hover */
 }
 
 /* Mensagem de erro */
 .login-container #error-message {
-    color: #ff4c4c; /* Vermelho */
+    color: #e74c3c; /* Vermelho para mensagens de erro */
     font-size: 14px;
     margin-top: 10px;
+}
+
+.label-input {
+    text-align: left;
+    margin-left: 2px;
 }
