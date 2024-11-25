@@ -4,7 +4,7 @@
   "main": "src/main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon --watch ./src --ext js,html,css --exec electron ."
+    "start": "electron ."
   },
   "keywords": [],
   "author": "",
@@ -14,7 +14,11 @@
     "electron": "^33.2.0",
     "electron-packager": "^17.1.2",
     "electron-reload": "^2.0.0-alpha.1",
-    "nodemon": "^3.1.7"
+    "electron-reloader": "^1.2.3",
+    "nodemon": "^3.1.7",
+    "webpack": "^5.96.1",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^5.1.0"
   },
   "dependencies": {
     "firebase": "^11.0.1"

@@ -3,19 +3,28 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f4f6f9; /* Cor de fundo neutra e clara */
-    color: #333; /* Texto escuro para legibilidade */
+    background-color: #f4f6f9;
+    /* Cor de fundo neutra e clara */
+    color: #333;
+    /* Texto escuro para legibilidade */
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
     height: 100vh;
-    transition: background-color 0.3s, color 0.3s; /* Transição suave */
+    transition: background-color 0.3s, color 0.3s;
+    /* Transição suave */
+}
+
+html {
+    margin: 0;
+    padding: 0;
 }
 
 /* Título */
 h2 {
-    color: #2c3e50; /* Azul escuro para o título */
+    color: #2c3e50;
+    /* Azul escuro para o título */
     font-size: 24px;
     font-weight: 600;
     text-align: center;
@@ -30,7 +39,8 @@ h2 {
 /* Menu principal */
 .menu {
     display: grid;
-    grid-template-columns: repeat(3, 1fr); /* Exibe 3 itens por linha */
+    grid-template-columns: repeat(3, 1fr);
+    /* Exibe 3 itens por linha */
     gap: 20px;
     justify-items: center;
     margin-top: 30px;
@@ -38,7 +48,8 @@ h2 {
 
 /* Itens do menu */
 .menu-item {
-    background-color: #ffffff; /* Fundo branco */
+    background-color: #ffffff;
+    /* Fundo branco */
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
@@ -48,9 +59,11 @@ h2 {
 }
 
 .menu-item:hover {
-    background-color: #2980b9; /* Azul claro no hover */
+    background-color: #2980b9;
+    /* Azul claro no hover */
     color: #fff;
-    transform: scale(1.05); /* Efeito de ampliação */
+    transform: scale(1.05);
+    /* Efeito de ampliação */
 }
 
 .menu-item i {
@@ -67,3 +80,198 @@ h2 {
 p {
     color: #555;
 }
+
+/* Estilos para o Modal */
+.modal {
+    display: none;
+    /* Inicialmente, o modal é escondido */
+    position: fixed;
+    z-index: 1;
+    /* Fica acima de outros elementos */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    /* Fundo escuro transparente */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Conteúdo do Modal */
+.modal-content {
+    background-color: #fff;
+    margin: 0 auto;
+    padding: 60px;
+    border-radius: 10px;
+    width: 100%;
+    /* Largura do modal */
+    max-width: 800px;
+    /* Largura máxima do modal */
+    box-sizing: border-box;
+    overflow: auto;
+}
+
+/* Título do Modal */
+h2 {
+    font-size: 24px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Geral */
+.modal {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+}
+
+.modal-content {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    max-width: 600px;
+    width: 100%;
+    position: relative;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Cabeçalho do Modal */
+h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #333;
+    text-align: center;
+}
+
+/* Botão de Fechar */
+.close-btn {
+    color: #999;
+    font-size: 28px;
+    font-weight: bold;
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.close-btn:hover {
+    color: #555;
+}
+
+/* Estilo do Formulário */
+.form-row {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.form-group {
+    flex: 1;
+    min-width: 240px;
+}
+
+
+
+#product-cod {
+    width: 80px;
+}
+
+#prince-bsq {
+    width: 120px; 
+}
+
+#form-row-bsq {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+#form-row-bsq > #item {
+    flex: 1;
+    min-width: 100px; 
+}
+
+
+label {
+    display: block;
+    font-weight: 600;
+    font-size: 16px;
+    color: #444;
+    margin-bottom: 6px;
+}
+
+input,
+textarea {
+    width: 100%;
+    padding: 12px;
+    margin-top: 6px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 16px;
+    color: #333;
+    box-sizing: border-box;
+}
+
+.input-cod {
+    width: 10px; 
+}
+
+textarea {
+    resize: none;
+    height: 80px;
+}
+
+/* Botão de Envio */
+button {
+    background-color: #28a745;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 600;
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 20px;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #218838;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .form-row {
+        flex-direction: column;
+    }
+
+    .modal-content {
+        padding: 15px;
+    }
+}
+
+
