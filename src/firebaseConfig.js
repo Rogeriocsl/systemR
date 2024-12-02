@@ -1,5 +1,6 @@
 const { initializeApp } = require('firebase/app');
 const { getAuth, browserLocalPersistence, setPersistence } = require('firebase/auth');
+const { getDatabase } = require('firebase/database');
 
 const firebaseConfig = {
     apiKey: "AIzaSyDryQ2Hqe0aMkfKxmJIJej_GPUQ7g5LXR0",
@@ -13,6 +14,7 @@ const firebaseConfig = {
 
 const firebaseApp = initializeApp(firebaseConfig);
 const auth = getAuth(firebaseApp);
+const database = getDatabase(firebaseApp);
 
 // Configura a persistência para LOCAL (manter o login entre reinicializações da aplicação)
 setPersistence(auth, browserLocalPersistence)
@@ -23,4 +25,4 @@ setPersistence(auth, browserLocalPersistence)
     console.error("Erro ao configurar persistEncia: ", error);
   });
 
-module.exports = { auth }; // Exporta o auth para ser usado em outros arquivos
+module.exports = { auth, database }; // Exporta o auth para ser usado em outros arquivos
