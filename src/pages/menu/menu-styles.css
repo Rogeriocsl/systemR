@@ -243,6 +243,7 @@ textarea {
 }
 
 /* Botão de Envio */
+
 button {
     background-color: #28a745;
     color: #fff;
@@ -255,19 +256,104 @@ button {
     width: 100%;
     margin-top: 20px;
     transition: background-color 0.3s ease;
+    height: 60px;
+    position: relative;  /* Necessário para o spinner ficar dentro do botão */
 }
 
-button:hover {
-    background-color: #218838;
+/* Spinner dentro do botão */
+button .spinner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-top: 4px solid #3498db;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    animation: spin 1s linear infinite;
+    display: none;  /* O spinner começa invisível */
 }
 
-/* Responsividade */
-@media (max-width: 768px) {
-    .form-row {
-        flex-direction: column;
-    }
-
-    .modal-content {
-        padding: 15px;
-    }
+/* Quando o botão está desabilitado, o texto some */
+button:disabled .spinner {
+    display: block;  /* Exibe o spinner quando o botão estiver desabilitado */
 }
+
+button:disabled .button-text {
+    visibility: hidden;  /* O texto "Cadastrar Produto" desaparece */
+}
+
+/* Quando o botão estiver desabilitado, ele muda para o estado de "desabilitado" */
+button[disabled] {
+    cursor: not-allowed;
+    background-color: #6c757d;
+}
+
+/* Texto dentro do botão */
+button .button-text {
+    visibility: visible;  /* O texto será visível por padrão */
+}
+
+
+/* Feedback */
+.feedback {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 10px 20px;
+    text-align: center;
+    border-radius: 5px;
+    width: 90%;
+    max-width: 400px;
+    display: none;
+    font-size: 16px;
+    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+    z-index: 100;
+}
+
+.success {
+    background-color: #28a745;
+    color: white;
+}
+
+.warning {
+    background-color: #ffc107;
+    color: black;
+}
+
+.error {
+    background-color: #dc3545;
+    color: white;
+}
+
+/* Spinner de carregamento (fora do botão) */
+.loading {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 101; /* Mais alto que o feedback */
+}
+
+.spinner {
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-top: 4px solid #3498db;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+
+
+
