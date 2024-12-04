@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="menu-styles.css"> <!-- Importando os estilos -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <!-- Font Awesome para ícones -->
+
+    
 </head>
 
 <body>
@@ -54,31 +56,34 @@
                 <div class="form-row">
                     <div>
                         <label for="product-cod">Código</label>
-                        <input type="text" id="product-cod" placeholder="A123" required>
+                        <input type="text" id="product-cod" placeholder="A123">
                     </div>
                     <div class="form-group">
                         <label for="product-name">Nome do Produto</label>
-                        <input type="text" id="product-name" placeholder="Digite o nome do produto" required>
+                        <input type="text" id="product-name" placeholder="Digite o nome do produto">
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="product-description">Descrição</label>
-                    <textarea id="product-description" placeholder="Digite a descrição do produto" required></textarea>
+                    <textarea id="product-description" placeholder="Digite a descrição do produto"></textarea>
                 </div>
+
                 <div id="form-row-bsq">
                     <div id="item">
-                        <label for="product-price-buy">Preço de Compra</label>
-                        <input type="number" id="product-price-buy" placeholder="R$ 0.00" required>
+                        <label for="product-price-buy">Preço de Compra:</label>
+                        <input type="text" id="product-price-buy" placeholder="R$ 0,00" name="product-price-buy">
                     </div>
                     <div id="item">
-                        <label for="product-price-sell">Preço de Venda</label>
-                        <input type="number" id="product-price-sell" placeholder="R$ 0.00" required>
+                        <label for="product-price-sell">Preço de Venda:</label>
+                        <input type="text" id="product-price-sell" placeholder="R$ 0,00" name="product-price-sell">
                     </div>
                     <div id="item">
-                        <label for="product-quantity">Quantidade</label>
-                        <input type="number" id="product-quantity" placeholder="0.00" required>
+                        <label for="product-peso">Quantidade</label>
+                        <input type="text" id="product-peso" placeholder="KG 0,00">
                     </div>
                 </div>
+                
+
 
                 <button type="submit" id="submit-btn">
                     <span class="button-text">Cadastrar Produto</span>

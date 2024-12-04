@@ -1,4 +1,6 @@
-const { ipcRenderer } = require('electron');
+const IMask = require('imask').default;
+
+
 const { database } = require('../../firebaseConfig');
 const { ref, push } = require('firebase/database');
 
@@ -20,7 +22,7 @@ function showFeedback(message, type) {
         feedbackElement.classList.add('error');
     }
 
-    // Remove a mensagem após 1.5 segundos
+    // Remove a mensagem após 2 segundos
     setTimeout(() => {
         feedbackElement.style.display = 'none';
     }, 2000);
@@ -40,21 +42,79 @@ function hideButtonLoading(button) {
     spinner.style.display = 'none'; // Esconde o spinner
 }
 
+// Função para mostrar o loading no botão
+function toggleButtonLoading(button, isLoading) {
+    const spinner = button.querySelector('.spinner');
+    if (isLoading) {
+        button.setAttribute('disabled', 'true'); // Desativa o botão
+        spinner.style.display = 'inline-block';  // Mostra o spinner
+    } else {
+        button.removeAttribute('disabled');  // Habilita o botão novamente
+        spinner.style.display = 'none'; // Esconde o spinner
+    }
+}
+
 // FIREBASE
 
+
 document.addEventListener('DOMContentLoaded', () => {
-    // Abre o modal
+    // Máscara para o preço de compra
+    const priceBuyInput = document.getElementById('product-price-buy');
+    IMask(priceBuyInput, {
+        mask: 'R$ num',  // Formato de moeda brasileira
+        blocks: {
+            num: {
+                mask: Number,
+                thousandsSeparator: '.',  // Separador de milhar
+                radix: ',',               // Separador decimal
+                scale: 2,                 // 2 casas decimais
+                min: 0,                   // Valor mínimo
+                padFractionalZeros: true, // Preenche as casas decimais com 0 se necessário
+
+            },
+        },
+    });
+
+    // Máscara para o preço de venda
+    const priceSellInput = document.getElementById('product-price-sell');
+    IMask(priceSellInput, {
+        mask: 'R$ num',  // Formato de moeda brasileira
+        blocks: {
+            num: {
+                mask: Number,
+                thousandsSeparator: '.',  // Separador de milhar
+                radix: ',',               // Separador decimal
+                scale: 2,                 // 2 casas decimais
+                min: 0,                   // Valor mínimo
+                padFractionalZeros: true, // Preenche as casas decimais com 0 se necessário
+
+            },
+        },
+    });
+
+    // Máscara para a peso (numérica com 2 casas decimais)
+    const pesoInput = document.getElementById('product-peso');
+    IMask(pesoInput, {
+        mask: Number,
+        thousandsSeparator: '',  // Sem separador de milhar
+        radix: '.',               // Separador decimal
+        scale: 3,                 // Até 2 casas decimais
+        max: 9999.99,             // Valor máximo
+        padFractionalZeros: true, // Preenche as casas decimais com 0 se necessário
+    });
+
+    // Função para abrir o modal
     document.getElementById('menu-cadastro-produtos').addEventListener('click', () => {
         const modal = document.getElementById('modal-cadastro-produtos');
         modal.style.display = 'flex';
     });
 
-    // Fecha o modal
+    // Função para fechar o modal
     document.getElementById('close-btn').addEventListener('click', () => {
         const modal = document.getElementById('modal-cadastro-produtos');
         modal.style.display = 'none';
     });
-
+/*
     // Fecha o modal ao clicar fora
     window.addEventListener('click', (event) => {
         const modal = document.getElementById('modal-cadastro-produtos');
@@ -62,7 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
             modal.style.display = 'none';
         }
     });
-
+**/
     // Salva os dados no Firebase ao enviar o formulário
     document.getElementById('product-form').addEventListener('submit', (event) => {
         event.preventDefault();
@@ -72,54 +132,45 @@ document.addEventListener('DOMContentLoaded', () => {
             codigo: document.getElementById('product-cod').value,
             nome: document.getElementById('product-name').value,
             descricao: document.getElementById('product-description').value,
-            precoCompra: parseFloat(document.getElementById('product-price-buy').value) || 0,
-            precoVenda: parseFloat(document.getElementById('product-price-sell').value) || 0,
-            quantidade: parseInt(document.getElementById('product-quantity').value) || 0
+            precoCompra: document.getElementById('product-price-buy').value,
+            precoVenda: document.getElementById('product-price-sell').value,
+            peso: document.getElementById('product-peso').value
         };
 
         console.log('Dados capturados:', productData); // Verificar se os dados estão corretos
 
         // Verifica se todos os campos estão preenchidos
-        if (!productData.codigo || !productData.nome || !productData.descricao || !productData.precoCompra || !productData.precoVenda || !productData.quantidade) {
+        if (!productData.nome || !productData.precoCompra || !productData.precoVenda || !productData.peso) {
             showFeedback('Por favor, preencha todos os campos.', 'warning');
             return;
         }
 
-        // Verificação simples de valores numéricos para os preços e quantidade
-        if (isNaN(productData.precoCompra) || isNaN(productData.precoVenda) || isNaN(productData.quantidade)) {
-            showFeedback('Os campos de preço e quantidade devem ser numéricos.', 'error');
-            return;
-        }
+       
 
         // Obtém o botão de "Cadastrar Produto"
         const submitButton = document.querySelector('button[type="submit"]');
 
         // Mostra o spinner no botão de submit
-        showButtonLoading(submitButton);
+        toggleButtonLoading(submitButton, true);
 
         // Referência para o nó 'produtos'
         const produtosRef = ref(database, 'produtos');
-
-        // Desabilita o botão e exibe o spinner
-        const submitBtn = document.getElementById('submit-btn');
-        submitBtn.disabled = true;
 
         // Enviar os dados ao Firebase
         push(produtosRef, productData)
             .then(() => {
                 // Esconde o spinner no botão
-                hideButtonLoading(submitButton);
+                toggleButtonLoading(submitButton, false);
 
                 showFeedback('Produto cadastrado com sucesso!', 'success');
                 document.getElementById('product-form').reset(); // Limpa o formulário
             })
             .catch((error) => {
                 // Esconde o spinner no botão
-                hideButtonLoading(submitButton);
+                toggleButtonLoading(submitButton, false);
 
                 console.error('Erro ao salvar produto:', error);
                 showFeedback('Erro ao cadastrar o produto. Tente novamente.', 'error');
             });
     });
-
 });

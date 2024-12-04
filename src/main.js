@@ -30,11 +30,17 @@ function createWindow() {
             console.log('Usuário não logado');
             janela.loadFile(path.join(__dirname, 'pages/login/index.html')); // Carrega a tela de login
         }
+
+      
+        
     });
 
-    // Abre DevTools para depuração (remova esta linha em produção)
-    janela.webContents.openDevTools();
+    setTimeout(() => {
+        janela.webContents.openDevTools({ mode: 'undocked' });
+    }, 1000); // Atraso de 1 segundo
+    
 }
+
 
 // Quando o app estiver pronto, cria a janela
 app.whenReady().then(createWindow);
