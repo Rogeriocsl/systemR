@@ -1,0 +1,254 @@
+/* Estilo Global */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f6f9; /* Fundo neutro claro */
+    color: #333; /* Texto escuro para contraste */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    transition: background-color 0.3s, color 0.3s; /* Suavidade nas mudanças de cor */
+}
+
+.container {
+    width: 100%;
+    margin: 0 auto;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+/* Cabeçalho */
+.header {
+    background-color: #3498db; /* Azul forte */
+    color: #fff; /* Texto branco */
+    padding: 10px;
+    text-align: center;
+    border-radius: 8px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 24px;
+}
+
+.button-back {
+    color: #333;
+    border: none;
+    padding: 12px 24px;
+    font-size: 16px;
+    cursor: pointer;
+    margin: 10px 0;
+    border-radius: 50px;
+    transition: background-color 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Espaço entre o ícone e o texto */
+}
+
+.button-back i {
+    font-size: 18px; /* Tamanho do ícone */
+}
+
+.button-back:hover {
+    background-color: #7d7e7d;
+    color: #ffffff;
+
+}
+
+/* Campo de Pesquisa */
+.search-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 30px;
+}
+
+.search-input {
+    padding: 12px 20px;
+    width: 80%;
+    max-width: 450px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 25px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.05);
+    transition: border-color 0.3s ease;
+}
+
+.search-input:focus {
+    border-color: #3498db; /* Azul no foco */
+    outline: none;
+}
+
+/* Estilos para a tabela e botões */
+.product-table td button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    margin: 0 5px;
+    color: #007bff;
+    transition: all 0.3s ease;
+}
+
+.product-table td button:hover {
+    color: #0056b3;
+    transform: scale(1.05);
+    text-decoration: underline;
+}
+
+/* Linhas alternadas para a tabela */
+.product-table tr:nth-child(even) {
+    background-color: #f1f5f9;
+}
+
+/* Estilo do cabeçalho da tabela */
+.product-table th {
+    background-color: #007bff;
+    color: #fff;
+    font-weight: 600;
+    text-align: center;
+    padding: 16px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    
+}
+
+/* Estilo do corpo da tabela */
+.product-table td {
+    padding: 14px;
+    border-bottom: 1px solid #e5e7eb;
+    
+}
+
+/* Ajustando a célula de Ações para ficar centralizada */
+.product-table td:last-child {
+    text-align: center;
+}
+
+/* Estilo da linha de "Nenhum produto encontrado" */
+.no-products {
+    font-style: italic;
+    color: #aaa;
+}
+
+
+
+/* Garantir que a tabela ocupe toda a largura disponível */
+section table {
+    table-layout: fixed;
+    width: 100%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+}
+
+/* Ajustar largura das colunas */
+.product-table th, .product-table td {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+/* Responsividade: garantir que o conteúdo da tabela seja ajustado corretamente */
+@media (max-width: 768px) {
+    .product-table th, .product-table td {
+        padding: 12px;
+    }
+
+    .product-table td button {
+        font-size: 14px;
+    }
+}
+
+
+/* Modal */
+.modal {
+    display: none; /* Certifique-se de exibir via JavaScript */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7); /* Aumentei a opacidade */
+    align-items: center;
+    justify-content: center;
+    z-index: 1000; /* Para garantir que fique no topo */
+}
+
+.modal-content {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    max-width: 600px;
+    width: 100%;
+    position: relative; /* Para garantir que o botão de fechar fique acima */
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1); /* Apliquei uma sombra maior */
+}
+
+/* Botão de Fechar */
+.close-btn {
+    color: #aaa;
+    font-size: 28px;
+    font-weight: bold;
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    cursor: pointer;
+}
+
+.close-btn:hover,
+.close-btn:focus {
+    color: #333;
+}
+
+/* Ajustes para feedback (aviso de sucesso ou erro) */
+.feedback {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 12px 24px;
+    text-align: center;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 400px;
+    font-size: 16px;
+    z-index: 999; /* Garantir que fique acima de outros conteúdos */
+    display: none;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.feedback.success {
+    background-color: #28a745;
+    color: white;
+}
+
+.feedback.warning {
+    background-color: #ffc107;
+    color: black;
+}
+
+.feedback.error {
+    background-color: #dc3545;
+    color: white;
+}
+
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .search-input {
+        width: 90%;
+    }
+
+    .product-table th,
+    .product-table td {
+        padding: 10px;
+    }
+
+    .button-back {
+        font-size: 14px;
+        padding: 10px 15px;
+    }
+}

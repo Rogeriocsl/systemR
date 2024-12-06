@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="estoque-styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>Estoque de Produtos</title>
+</head>
+
+<body>
+    <div class="container">
+
+        <!-- Botão de Voltar -->
+        <button id="menu-back" class="button-back">
+            <i class="fas fa-arrow-left"></i> Voltar
+        </button>
+
+        <!-- Cabeçalho -->
+        <header class="header">
+            <h1>Estoque de Produtos</h1>
+        </header>
+
+        <!-- Conteúdo -->
+        <main class="content">
+
+            <!-- Campo de Pesquisa -->
+            <section class="search-container">
+                <input type="text" id="search-input" class="search-input" placeholder="Pesquisar produto..." oninput="filtrarProdutos()">
+            </section>
+
+            <section class="relative overflow-x-auto shadow-2xl rounded-lg bg-white max-w-full">
+                <table class="product-table w-full text-sm text-left text-gray-700">
+                    <thead class="bg-gradient-to-r from-blue-600 to-blue-400 text-white">
+                        <tr>
+                            <th class="px-6 py-4 text-center">Produto</th>
+                            <th class="px-6 py-4">Descrição</th>
+                            <th class="px-6 py-4 text-center">Preço de Compra</th>
+                            <th class="px-6 py-4 text-center">Preço de Venda</th>
+                            <th class="px-6 py-4 text-center">Peso</th>
+                            <th class="px-6 py-4 text-center">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody class="product-list">
+                        <tr class="no-products">
+                            <td colspan="6" class="py-4 text-center text-gray-500 italic">Nenhum produto encontrado.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+            
+            
+            
+
+            <!-- Modal de Edição -->
+            <div id="editModal" class="modal" role="dialog" aria-labelledby="modal-title" aria-hidden="true">
+                <div class="modal-content">
+                    <button class="close-btn" aria-label="Fechar">&times;</button>
+                    <h2 id="modal-title">Editar Produto</h2>
+                    <form id="edit-form">
+                        <label for="product-name">Nome do Produto</label>
+                        <input type="text" id="product-name" name="product-name" required>
+
+                        <label for="product-description">Descrição</label>
+                        <textarea id="product-description" name="product-description" required></textarea>
+
+                        <label for="purchase-price">Preço de Compra</label>
+                        <input type="number" id="purchase-price" name="purchase-price" required>
+
+                        <label for="sale-price">Preço de Venda</label>
+                        <input type="number" id="sale-price" name="sale-price" required>
+
+                        <label for="weight">Peso</label>
+                        <input type="number" id="weight" name="weight" required>
+
+                        <button type="submit" class="save-btn">Salvar Alterações</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Feedback -->
+            <div id="feedback" class="feedback" aria-live="polite" style="display: none;"></div>
+        </main>
+    </div>
+
+    <script src="estoque.js"></script>
+</body>
+
+</html>

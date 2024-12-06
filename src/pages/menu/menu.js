@@ -1,4 +1,5 @@
 const IMask = require('imask').default;
+const { ipcRenderer } = require('electron');
 
 
 const { database } = require('../../firebaseConfig');
@@ -28,19 +29,10 @@ function showFeedback(message, type) {
     }, 2000);
 }
 
-// Função para mostrar o loading no botão
-function showButtonLoading(button) {
-    button.setAttribute('disabled', 'true'); // Desativa o botão
-    const spinner = button.querySelector('.spinner');
-    spinner.style.display = 'inline-block'; // Mostra o spinner
-}
-
-// Função para esconder o loading no botão
-function hideButtonLoading(button) {
-    button.removeAttribute('disabled'); // Habilita o botão novamente
-    const spinner = button.querySelector('.spinner');
-    spinner.style.display = 'none'; // Esconde o spinner
-}
+// Para navegar para o estoque de produtos
+document.getElementById('estoqueProdutosButton').addEventListener('click', () => {
+    ipcRenderer.send('estoque-produtos');
+});
 
 // Função para mostrar o loading no botão
 function toggleButtonLoading(button, isLoading) {

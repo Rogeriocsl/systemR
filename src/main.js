@@ -64,7 +64,21 @@ ipcMain.on('login-sucesso', () => {
     janela.loadFile(path.join(__dirname, 'pages/menu/index.html'));
 });
 
+
 // Para a navegação no menu "Cadastro de Produtos"
 ipcMain.on('abrir-cadastro-produtos', () => {
     janela.loadFile(path.join(__dirname, 'pages/CadastroProduto/index.html'));
 });
+
+// Para a navegação no menu "Cadastro de Produtos"
+ipcMain.on('estoque-produtos', () => {
+    janela.loadFile(path.join(__dirname, 'pages/estoque/index.html'));
+});
+
+// Para a navegação no menu "Cadastro de Produtos"
+ipcMain.on('menu-principal', () => {
+    console.log('Carregando menu principal...');
+    console.log(path.join(__dirname, 'pages/menu/index.html'));
+    janela.loadFile(path.join(__dirname, 'pages/menu/index.html'));
+});
+
