@@ -25,6 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         itemProduto.classList.add('product-item');
                         itemProduto.dataset.productId = id;
                         itemProduto.innerHTML = `
+                            <td>${produto.codigo}</td>
                             <td>${produto.nome}</td>
                             <td>${produto.descricao}</td>
                             <td>${produto.precoCompra}</td>
@@ -32,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             <td>${produto.peso} kg</td>
                             <td>
                                 <button class="edit-btn">
-                                    <i class="fas fa-edit"></i>
+                                    <i class="fas fa-edit edit-btn"></i>
                                 </button>
                                 <button class="delete-btn">
                                     <i class="fas fa-trash-alt"></i>
@@ -80,29 +81,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Evento para abrir o modal ao clicar no ícone de editar
     document.addEventListener('click', (event) => {
-        if (event.target.classList.contains('edit-btn')) {
+        // Verifica se o clique foi no botão de editar, e não no ícone
+        if (event.target.classList.contains('edit-btn') || event.target.closest('.edit-btn')) {
             const row = event.target.closest('tr');
             const productId = row.dataset.productId;
-            const productName = row.cells[0].innerText;
-            const productDescription = row.cells[1].innerText;
-            const purchasePrice = row.cells[2].innerText;
-            const salePrice = row.cells[3].innerText;
-            const weight = row.cells[4].innerText;
-
-            // Preencher os campos do formulário com os dados do produto
+            const productCod = row.cells[0].innerText;
+            const productName = row.cells[1].innerText;
+            const productDescription = row.cells[2].innerText;
+            const purchasePrice = row.cells[3].innerText;
+            const salePrice = row.cells[4].innerText;
+            const weight = row.cells[5].innerText;
+    
+            // Preenche os campos do formulário com os dados do produto
+            document.getElementById('product-cod').value = productCod;
             document.getElementById('product-name').value = productName;
             document.getElementById('product-description').value = productDescription;
             document.getElementById('purchase-price').value = purchasePrice;
             document.getElementById('sale-price').value = salePrice;
             document.getElementById('weight').value = weight;
-
-            // Mostrar o modal
+    
+            // Exibe o modal
             editModal.style.display = 'flex';
-
-            // Salvar o id do produto para identificar qual produto foi alterado
-            editForm.dataset.productId = productId; // Adicionando ID como atributo no form
+    
+            // Salva o ID do produto no formulário
+            editForm.dataset.productId = productId;
         }
     });
+    
 
     // Fechar o modal
     closeModal.addEventListener('click', () => {
@@ -114,6 +119,7 @@ editForm.addEventListener('submit', function(event) {
     event.preventDefault();
 
     const updatedProduct = {
+        codigo: document.getElementById('product-cod').value,
         nome: document.getElementById('product-name').value,
         descricao: document.getElementById('product-description').value,
         precoCompra: document.getElementById('purchase-price').value,
@@ -164,11 +170,12 @@ editForm.addEventListener('submit', function(event) {
 
     // Atualizar a tabela com os novos dados
     const updatedRow = document.querySelector(`[data-product-id="${productId}"]`);
-    updatedRow.cells[0].innerText = updatedProduct.nome;
-    updatedRow.cells[1].innerText = updatedProduct.descricao;
-    updatedRow.cells[2].innerText = updatedProduct.precoCompra;
-    updatedRow.cells[3].innerText = updatedProduct.precoVenda;
-    updatedRow.cells[4].innerText = updatedProduct.peso;
+    updatedRow.cells[0].innerText = updatedProduct.codigo;
+    updatedRow.cells[1].innerText = updatedProduct.nome;
+    updatedRow.cells[2].innerText = updatedProduct.descricao;
+    updatedRow.cells[3].innerText = updatedProduct.precoCompra;
+    updatedRow.cells[4].innerText = updatedProduct.precoVenda;
+    updatedRow.cells[5].innerText = updatedProduct.peso;
 });
 
 
