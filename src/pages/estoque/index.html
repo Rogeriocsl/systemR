@@ -12,6 +12,9 @@
 <body>
     <div class="container">
 
+        <div id="feedback-message" class="feedback-message" style="display: none;"></div>
+
+
         <!-- Botão de Voltar -->
         <button id="menu-back" class="button-back">
             <i class="fas fa-arrow-left"></i> Voltar
@@ -60,7 +63,8 @@
             <div id="editModal" class="modal" style="display: none;">
                 <div class="modal-content">
                     <!-- Feedback no topo -->
-                    <div id="feedback" class="feedback" style="display: none;"></div>
+
+
                     <span class="close-btn" id="close-btn">&times;</span>
                     <h2>Editar Produto</h2>
                     <form id="edit-form">
@@ -78,7 +82,7 @@
                             <label for="product-description">Descrição</label>
                             <textarea id="product-description" placeholder="Digite a descrição do produto"></textarea>
                         </div>
-        
+
                         <div id="form-row-bsq">
                             <div id="item">
                                 <label for="purchase-price">Preço de Compra:</label>
@@ -93,18 +97,31 @@
                                 <input type="text" id="weight" placeholder="KG 0,00">
                             </div>
                         </div>
-                        
-        
-        
+
+
+
                         <button type="submit" id="submit-btn">
                             <span class="button-text">Salvar</span>
                             <div class="spinner"></div>
                         </button>
-        
+
                     </form>
                 </div>
             </div>
-            
+
+
+            <!-- Modal de Confirmação de Exclusão -->
+            <div id="deleteConfirmationModal" class="modal-delete" style="display: none;">
+                <div class="modal-delete-content">
+                    <h3>Tem certeza que deseja excluir este produto?</h3>
+                    <div class="modal-actions">
+                        <button id="confirmDeleteBtn" class="btn confirm-btn">Sim, excluir</button>
+                        <button id="cancelDeleteBtn" class="btn cancel-btn">Cancelar</button>
+                    </div>
+                </div>
+            </div>
+
+
 
 
             <!-- Feedback -->

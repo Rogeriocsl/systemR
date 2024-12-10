@@ -106,15 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const modal = document.getElementById('modal-cadastro-produtos');
         modal.style.display = 'none';
     });
-/*
-    // Fecha o modal ao clicar fora
-    window.addEventListener('click', (event) => {
-        const modal = document.getElementById('modal-cadastro-produtos');
-        if (event.target === modal) {
-            modal.style.display = 'none';
-        }
-    });
-**/
+
     // Salva os dados no Firebase ao enviar o formulário
     document.getElementById('product-form').addEventListener('submit', (event) => {
         event.preventDefault();
