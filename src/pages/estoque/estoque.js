@@ -56,17 +56,28 @@ document.addEventListener('DOMContentLoaded', () => {
     // Função para filtrar produtos baseado na pesquisa
     function filtrarProdutos() {
         const searchValue = document.getElementById('search-input').value.toLowerCase();
-        const rows = document.querySelectorAll('.product-item');
-
+        const rows = document.querySelectorAll('.product-item'); // Seleciona todas as linhas da tabela
+    
         rows.forEach((row) => {
-            const nomeProduto = row.querySelector('td').textContent.toLowerCase();
-            if (nomeProduto.includes(searchValue)) {
-                row.style.display = '';
+            let found = false; // Variável para determinar se algum campo da linha corresponde à pesquisa
+    
+            // Percorre todas as células da linha e verifica se alguma contém o valor da pesquisa
+            const cells = row.querySelectorAll('td');
+            cells.forEach((cell) => {
+                if (cell.textContent.toLowerCase().includes(searchValue)) {
+                    found = true; // Se encontrar algum valor correspondente, marca como encontrado
+                }
+            });
+    
+            // Exibe ou esconde a linha com base na pesquisa
+            if (found) {
+                row.style.display = ''; // Exibe a linha
             } else {
-                row.style.display = 'none';
+                row.style.display = 'none'; // Esconde a linha
             }
         });
     }
+    
 
     // Adiciona o evento de input ao campo de pesquisa
     document.getElementById('search-input').addEventListener('input', filtrarProdutos);
