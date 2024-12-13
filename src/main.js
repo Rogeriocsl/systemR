@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain, Menu } = require('electron');
 const path = require('path');
 const { auth } = require('./firebaseConfig'); // Importa o auth do Firebase
 const { onAuthStateChanged } = require('firebase/auth');
@@ -12,11 +12,20 @@ require('electron-reload')(path.join(__dirname, '..', 'src'), {
 function createWindow() {
     janela = new BrowserWindow({
         width: 800,
-        height: 600,
+        height: 800,
         webPreferences: {
             nodeIntegration: true, // Permite o uso de require no frontend
             contextIsolation: false,
         }
+    });
+
+    janela.setMinimumSize(900, 670);
+
+    Menu.setApplicationMenu(null);
+
+    // Força o título ao terminar de carregar qualquer página
+    janela.webContents.on('did-finish-load', () => {
+        janela.setTitle('System R');
     });
 
     // Verifica o estado de autenticação do usuário
@@ -31,14 +40,14 @@ function createWindow() {
             janela.loadFile(path.join(__dirname, 'pages/login/index.html')); // Carrega a tela de login
         }
 
-      
-        
+
+
     });
 
     setTimeout(() => {
         janela.webContents.openDevTools({ mode: 'undocked' });
     }, 1000); // Atraso de 1 segundo
-    
+
 }
 
 

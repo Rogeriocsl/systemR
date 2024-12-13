@@ -47,12 +47,13 @@ body {
 
 .pdv-container {
     width: 90%;
-    height: 850px;
+    height: 600px;
     max-width: 1200px;
     background-color: #e7f3ff;
     border-radius: 10px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
     padding: 20px;
+    margin-top: 40px;
     display: flex;
     flex-direction: column;
 }
@@ -143,16 +144,20 @@ body {
     display: flex;
     flex-direction: column;
     gap: 10px;
+    width: auto;
+
 }
 
 .search-container input {
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
+    width: auto;
 }
 
 .table-container {
     flex: 2;
+    width: auto;
     overflow-y: auto;
     background-color: white;
     border: 1px solid #ccc;
