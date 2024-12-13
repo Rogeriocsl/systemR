@@ -13,17 +13,41 @@ function createWindow() {
     janela = new BrowserWindow({
         width: 800,
         height: 800,
+        resizable: false, // Impede o redimensionamento manual
+        fullscreenable: false, // Impede a alternância para o modo de tela cheia
+        movable: true, // Permite mover a janela
         webPreferences: {
-            nodeIntegration: true, // Permite o uso de require no frontend
+            nodeIntegration: true,
             contextIsolation: false,
+        },
+    });
+
+    // Inicia a janela maximizada
+    janela.maximize();
+
+    // Remove o menu padrão
+    Menu.setApplicationMenu(null);
+
+    // Previne que a janela seja redimensionada
+    janela.on('will-resize', (event) => {
+        event.preventDefault(); // Cancela qualquer tentativa de redimensionamento
+    });
+
+    // Monitora o redimensionamento e força a maximização novamente
+    janela.on('resize', () => {
+        if (!janela.isMaximized()) {
+            janela.maximize(); // Restaura o tamanho máximo
         }
     });
 
-    janela.setMinimumSize(900, 670);
+    // Monitora o evento de movimentação (opcional)
+    janela.on('moved', () => {
+        if (!janela.isMaximized()) {
+            janela.maximize(); // Garante que a janela permaneça maximizada
+        }
+    });
 
-    Menu.setApplicationMenu(null);
-
-    // Força o título ao terminar de carregar qualquer página
+    // Define o título ao carregar qualquer página
     janela.webContents.on('did-finish-load', () => {
         janela.setTitle('System R');
     });
