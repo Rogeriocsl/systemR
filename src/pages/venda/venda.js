@@ -1,19 +1,18 @@
-const { ipcRenderer } = require('electron');
-const { database } = require('../../firebaseConfig');
-const { get, ref } = require('firebase/database');
-
-
-document.getElementById('menu-back').addEventListener('click', () => {
-    console.log('Botão "Voltar" clicado'); // Log para depurar
-    ipcRenderer.send('menu-principal');
-});
-
-
 document.addEventListener('DOMContentLoaded', () => {
+    const { ipcRenderer } = require('electron');
+    const { database } = require('../../firebaseConfig');
+    const { get, ref } = require('firebase/database');
+
+    const cartCoupons = document.querySelector('.cart-coupons');
+
+    document.getElementById('menu-back').addEventListener('click', () => {
+        ipcRenderer.send('menu-principal');
+    });
+
     // Função para pesquisar produtos no Firebase
     function pesquisarProdutos() {
-        const searchValue = document.getElementById('search-input').value.toLowerCase(); // Captura o texto digitado
-        const produtosRef = ref(database, 'produtos'); // Referência ao nó no Firebase
+        const searchValue = document.getElementById('search-input').value.toLowerCase();
+        const produtosRef = ref(database, 'produtos');
 
         get(produtosRef)
             .then((snapshot) => {
@@ -24,7 +23,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     let encontrou = false;
 
-                    // Filtra o produto com base no texto de pesquisa
                     Object.keys(produtos).forEach((id) => {
                         const produto = produtos[id];
                         const codigo = produto.codigo.toLowerCase();
@@ -64,6 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
     }
 
+    // Função para adicionar ao carrinho
     function adicionarAoCarrinho(event) {
         if (event.target.classList.contains('add-to-cart-btn')) {
             const button = event.target;
@@ -71,69 +70,45 @@ document.addEventListener('DOMContentLoaded', () => {
             const codigo = button.dataset.codigo;
             const nome = button.dataset.nome;
             const preco = parseFloat(button.dataset.preco);
-            
+
             // Captura o peso especificado
             const pesoInput = button.parentElement.querySelector('.product-weight');
             const peso = parseFloat(pesoInput.value);
-    
-            // Valida se o peso foi inserido corretamente
+
             if (isNaN(peso) || peso <= 0) {
                 alert('Por favor, insira um peso válido antes de adicionar ao carrinho.');
                 return;
             }
-    
-            const carrinho = document.querySelector('.cart-coupons');
-    
-            // Verifica se o produto já está no carrinho
-            let itemExistente = carrinho.querySelector(`.coupon[data-id="${produtoId}"]`);
-            if (itemExistente) {
-                // Incrementa o peso e atualiza o preço total
-                const pesoElement = itemExistente.querySelector('.coupon-weight');
-                const precoElement = itemExistente.querySelector('.coupon-total');
-                let pesoAtual = parseFloat(pesoElement.textContent);
-                pesoAtual += peso;
-                pesoElement.textContent = pesoAtual.toFixed(2);
-                precoElement.textContent = `R$ ${(pesoAtual * preco).toFixed(2)}`;
-            } else {
-                // Adiciona um novo item ao carrinho com estilo de cupom
-                const cupom = document.createElement('div');
-                cupom.classList.add('coupon');
-                cupom.dataset.id = produtoId;
-                cupom.innerHTML = `
-                    <div class="coupon-header">
-                        <span><strong>Código:</strong> ${codigo}</span>
-                        <span><strong>Nome:</strong> ${nome}</span>
-                    </div>
-                    <div class="coupon-details">
-                        <span><strong>Peso:</strong> <span class="coupon-weight">${peso.toFixed(2)}</span> kg</span>
-                        <span><strong>Preço Total:</strong> <span class="coupon-total">R$ ${(peso * preco).toFixed(2)}</span></span>
-                    </div>
-                    <button class="remove-from-cart-btn">Remover</button>
-                `;
-                carrinho.appendChild(cupom);
-            }
-        }
-    }
-    
 
+            // Adiciona o produto como um cupom
+            const cupom = document.createElement('div');
+            cupom.classList.add('coupon');
+            cupom.innerHTML = `
+                <div class="coupon-header">
+                    <span><strong>Código:</strong> ${codigo}</span>
+                    <span><strong>Nome:</strong> ${nome}</span>
+                </div>
+                <div class="coupon-details">
+                    <span><strong>Peso:</strong> ${peso.toFixed(2)} kg</span>
+                    <span><strong>Preço Total:</strong> R$ ${(peso * preco).toFixed(2)}</span>
+                </div>
+                <button class="remove-from-cart-btn">Remover</button>
+            `;
+            cartCoupons.appendChild(cupom);
 
-    function removerDoCarrinho(event) {
-        if (event.target.classList.contains('remove-from-cart-btn')) {
-            const row = event.target.closest('tr');
-            row.remove();
+            // Rolagem automática para o final
+            cartCoupons.scrollTop = cartCoupons.scrollHeight;
+
+            // Adiciona evento para remover o cupom
+            cupom.querySelector('.remove-from-cart-btn').addEventListener('click', () => {
+                cartCoupons.removeChild(cupom);
+            });
         }
     }
 
-
-    // Adiciona o evento de input ao campo de pesquisa
-    document.getElementById('search-input').addEventListener('input', (event) => {
-        console.log('Valor digitado:', event.target.value); // Log para verificar o valor digitado
-        pesquisarProdutos(); // Chama a função de pesquisa
-    });
+    // Evento de input para pesquisa
+    document.getElementById('search-input').addEventListener('input', pesquisarProdutos);
 
     // Evento para adicionar ao carrinho
     document.addEventListener('click', adicionarAoCarrinho);
-
-    // Evento para remover do carrinho
-    document.addEventListener('click', removerDoCarrinho);
 });
