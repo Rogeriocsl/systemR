@@ -47,7 +47,7 @@ body {
 
 .pdv-container {
     width: 90%;
-    height: 600px;
+    height: 700px;
     max-width: 1200px;
     background-color: #e7f3ff;
     border-radius: 10px;
@@ -92,22 +92,24 @@ body {
 }
 
 .cart-coupons {
-    flex: 1;
-    overflow-y: auto; /* Ativa o scrollbar vertical se necessário */
+    max-height: 350px; /* Define a altura máxima */
+    overflow-y: auto; /* Ativa a barra de rolagem vertical */
+    overflow-x: hidden; /* Evita a barra de rolagem horizontal */
     display: flex;
-    flex-direction: column;
-    gap: 10px;
-    max-height: 500px; /* Define uma altura máxima */
+    flex-direction: column; /* Garante que os itens sejam empilhados */
+    gap: 5px; /* Espaçamento entre os itens */
 }
 
 
+
 .coupon {
-    background: white;
-    border: 2px dashed #333;
     padding: 10px;
+    border: 1px solid #ddd;
+    background-color: white;
     border-radius: 5px;
-    font-family: 'Courier New', Courier, monospace;
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
 }
 
 .coupon-header {
@@ -148,7 +150,7 @@ body {
 
 }
 
-.search-container input {
+.search-input{
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
@@ -223,4 +225,66 @@ table th {
 
 .actions button[data-key]:before {
     content: attr(data-key) ' - ';
+}
+
+
+/* Contêiner para alinhar o input e o botão na mesma linha */
+.input-button-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Espaço entre o input e o botão */
+}
+
+/* Estilo do input */
+.product-weight {
+    width: 80px;
+    height: 40px; /* Define a altura máxima */
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+    text-align: center;
+    font-family: Arial, sans-serif;
+}
+
+.product-weight:focus {
+    border-color: #2196f3;
+    box-shadow: 0px 0px 5px rgba(33, 150, 243, 0.5);
+    outline: none;
+}
+
+/* Estilo do botão com ícones */
+.add-to-cart-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    color: #4caf50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    padding: 5px;
+    width: 40px; /* Largura fixa para consistência */
+    height: 40px; /* Altura fixa para alinhamento com o input */
+    border-radius: 5px;
+    position: relative;
+    background-color: #f5f5f5;
+}
+
+.add-to-cart-btn:hover {
+    background-color: #e0e0e0;
+    color: #45a049;
+}
+
+/* Ícones dentro do botão */
+.add-to-cart-btn i {
+    font-size: 18px;
+    line-height: 1;
+}
+
+.add-to-cart-btn i.fa-plus {
+    font-size: 12px; /* Ícone menor para o "+" */
+    position: absolute;
+    transform: translate(5px, -5px);
 }

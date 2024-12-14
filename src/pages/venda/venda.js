@@ -39,11 +39,13 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <td>${produto.descricao}</td>
                                 <td>R$ ${produto.precoVenda}</td>
                                 <td>${produto.peso} kg</td>
-                                <td>
-                                    <input type="number" class="product-weight" min="0.1" step="0.1" placeholder="Peso (kg)" />
-                                    <button class="add-to-cart-btn" data-id="${id}" data-codigo="${produto.codigo}" data-nome="${produto.nome}" data-preco="${produto.precoVenda}">
-                                        Adicionar ao Carrinho
-                                    </button>
+                                <td class="action-cell">
+                                    <div class="input-button-wrapper">
+                                        <input type="number" class="product-weight" placeholder="KG" />
+                                        <button class="add-to-cart-btn" data-id="${id}" data-codigo="${produto.codigo}" data-nome="${produto.nome}" data-preco="${produto.precoVenda}">
+                                            <i class="fa fa-shopping-cart"></i><i class="fa fa-plus"></i>
+                                        </button>
+                                    </div>
                                 </td>
                             `;
                             listaProdutos.appendChild(itemProduto);
@@ -64,15 +66,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Função para adicionar ao carrinho
     function adicionarAoCarrinho(event) {
-        if (event.target.classList.contains('add-to-cart-btn')) {
-            const button = event.target;
+        const button = event.target.closest('.add-to-cart-btn');
+        if (button) {
             const produtoId = button.dataset.id;
             const codigo = button.dataset.codigo;
             const nome = button.dataset.nome;
             const preco = parseFloat(button.dataset.preco);
 
             // Captura o peso especificado
-            const pesoInput = button.parentElement.querySelector('.product-weight');
+            const pesoInput = button.closest('.input-button-wrapper').querySelector('.product-weight');
+            if (!pesoInput) {
+                alert('Erro: Campo de peso não encontrado.');
+                return;
+            }
+
             const peso = parseFloat(pesoInput.value);
 
             if (isNaN(peso) || peso <= 0) {
