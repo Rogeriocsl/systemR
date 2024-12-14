@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const { ipcRenderer } = require('electron');
     const { database } = require('../../firebaseConfig');
-    const { get, ref } = require('firebase/database');
+    const { get, ref, push, update } = require('firebase/database');  // Incluindo update para atualizar as quantidades
 
     const cartCoupons = document.querySelector('.cart-coupons');
     let totalCarrinho = 0; // Variável para armazenar o total do carrinho
@@ -96,19 +96,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 Swal.fire({
                     icon: 'warning',
                     title: '🚨 Limite de Quantidade Atingido 🚨',
-                    html: `
-                        <strong>${nome}</strong><br><br>
-                        O limite de peso disponível para este produto é de <strong>${pesoMaximo} kg</strong>.<br><br>
-                        <em>Por favor, revise a quantidade e tente novamente.</em><br><br>
-                        Caso precise de mais ajuda, entre em contato com nosso suporte!
-                    `,
+                    html: `O limite de peso disponível para este produto é de <strong>${pesoMaximo} kg</strong>.`,
                     confirmButtonText: 'Ok, entendi',
                     confirmButtonColor: '#3085d6',
                     background: '#f9f9f9',
                     iconColor: '#f1c40f',
-                    didOpen: () => {
-                        Swal.showLoading();
-                    }
                 });
                 return;
             }
@@ -168,9 +160,114 @@ document.addEventListener('DOMContentLoaded', () => {
         totalElement.textContent = `Total: R$ ${totalCarrinho.toFixed(2)}`;
     }
 
+    function finalizarVenda() {
+        if (Object.keys(produtosNoCarrinho).length === 0) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Carrinho Vazio',
+                text: 'Adicione produtos ao carrinho antes de finalizar a venda.',
+            });
+            return;
+        }
+
+        Swal.fire({
+            title: 'Confirmar Venda',
+            text: `Total: R$ ${totalCarrinho.toFixed(2)}`,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Confirmar',
+            cancelButtonText: 'Cancelar',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Salvar venda no Firebase
+                const vendasRef = ref(database, 'vendas');
+                const dataHora = new Date().toLocaleString('pt-BR'); // Formato de data e hora pt-BR
+                const vendaDetalhes = Object.keys(produtosNoCarrinho).map((produtoId) => {
+                    const produto = produtosNoCarrinho[produtoId];
+                    const produtoInfo = cartCoupons.querySelector(`[data-id="${produtoId}"]`);
+                    const nomeProduto = produtoInfo.querySelector('.coupon-header').children[1].textContent.split(':')[1].trim(); // Nome do produto
+                    const quantidadeProduto = produto; // A quantidade no carrinho é o peso (em kg)
+
+                    return {
+                        produtoId,
+                        nome: nomeProduto,
+                        quantidade: quantidadeProduto,
+                    };
+                });
+
+                const novaVenda = {
+                    dataHora,
+                    produtos: vendaDetalhes,
+                    total: totalCarrinho,
+                };
+
+                push(vendasRef, novaVenda).then(() => {
+                    // Atualizar o peso dos produtos no Firebase
+                    Object.keys(produtosNoCarrinho).forEach((produtoId) => {
+                        const produtoRef = ref(database, `produtos/${produtoId}`);
+                        get(produtoRef)
+                            .then((snapshot) => {
+                                if (snapshot.exists()) {
+                                    const produto = snapshot.val();
+                                    const pesoAtual = parseFloat(produto.peso); // Converte o peso atual para número
+                                    const pesoNoCarrinho = produtosNoCarrinho[produtoId]; // Peso comprado
+
+                                    if (isNaN(pesoAtual) || pesoAtual < pesoNoCarrinho) {
+                                        Swal.fire({
+                                            icon: 'error',
+                                            title: 'Erro de Estoque',
+                                            text: `O produto ${produto.nome} não possui peso suficiente em estoque.`,
+                                        });
+                                        return;
+                                    }
+
+                                    const novoPeso = pesoAtual - pesoNoCarrinho;
+
+                                    update(produtoRef, { peso: novoPeso.toFixed(3) }) // Atualiza o peso no Firebase
+                                        .then(() => {
+                                            console.log(`Peso atualizado para o produto ${produto.nome}: ${novoPeso} kg`);
+                                        })
+                                        .catch((error) => {
+                                            console.error('Erro ao atualizar o peso do produto:', error);
+                                        });
+                                }
+                            })
+                            .catch((error) => {
+                                console.error('Erro ao buscar o produto no Firebase:', error);
+                            });
+                    });
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Venda Finalizada',
+                        text: 'A venda foi concluída com sucesso!',
+                    });
+
+                    // Limpar carrinho
+                    cartCoupons.innerHTML = '';
+                    produtosNoCarrinho = {};
+                    totalCarrinho = 0;
+                    atualizarTotalCarrinho();
+                }).catch((error) => {
+                    console.error('Erro ao salvar a venda:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Erro',
+                        text: 'Ocorreu um erro ao finalizar a venda. Tente novamente mais tarde.',
+                    });
+                });
+            }
+        });
+    }
+
+
+
     // Evento de input para pesquisa
     document.getElementById('search-input').addEventListener('input', pesquisarProdutos);
 
     // Evento para adicionar ao carrinho
     document.addEventListener('click', adicionarAoCarrinho);
+
+    // Evento para finalizar a venda
+    document.getElementById('finalizar-venda').addEventListener('click', finalizarVenda); // Botão para finalizar a venda
 });
