@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const { get, ref } = require('firebase/database');
 
     const cartCoupons = document.querySelector('.cart-coupons');
+    let totalCarrinho = 0; // Variável para armazenar o total do carrinho
 
     document.getElementById('menu-back').addEventListener('click', () => {
         ipcRenderer.send('menu-principal');
@@ -41,8 +42,8 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <td>${produto.peso} kg</td>
                                 <td class="action-cell">
                                     <div class="input-button-wrapper">
-                                        <input type="number" class="product-weight" placeholder="KG" />
-                                        <button class="add-to-cart-btn" data-id="${id}" data-codigo="${produto.codigo}" data-nome="${produto.nome}" data-preco="${produto.precoVenda}">
+                                        <input type="number" class="product-weight" placeholder="KG" min="0" max="${produto.quantidade}" />
+                                        <button class="add-to-cart-btn" data-id="${id}" data-codigo="${produto.codigo}" data-nome="${produto.nome}" data-preco="${produto.precoVenda}" data-quantidade="${produto.quantidade}">
                                             <i class="fa fa-shopping-cart"></i><i class="fa fa-plus"></i>
                                         </button>
                                     </div>
@@ -72,22 +73,25 @@ document.addEventListener('DOMContentLoaded', () => {
             const codigo = button.dataset.codigo;
             const nome = button.dataset.nome;
             const preco = parseFloat(button.dataset.preco);
+            const quantidadeDisponivel = parseInt(button.dataset.quantidade);
 
             // Captura o peso especificado
             const pesoInput = button.closest('.input-button-wrapper').querySelector('.product-weight');
-            if (!pesoInput) {
-                alert('Erro: Campo de peso não encontrado.');
-                return;
-            }
-
             const peso = parseFloat(pesoInput.value);
 
+            // Valida o peso
             if (isNaN(peso) || peso <= 0) {
-                alert('Por favor, insira um peso válido antes de adicionar ao carrinho.');
+                alert('Por favor, insira um peso válido.');
                 return;
             }
 
-            // Adiciona o produto como um cupom
+            // Verifica se a quantidade é maior que a disponível
+            if (peso > quantidadeDisponivel) {
+                alert(`A quantidade disponível é de ${quantidadeDisponivel} kg.`);
+                return;
+            }
+
+            // Adiciona o produto ao carrinho
             const cupom = document.createElement('div');
             cupom.classList.add('coupon');
             cupom.innerHTML = `
@@ -103,14 +107,26 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
             cartCoupons.appendChild(cupom);
 
+            // Atualiza o total do carrinho
+            totalCarrinho += (peso * preco);
+            atualizarTotalCarrinho();
+
             // Rolagem automática para o final
             cartCoupons.scrollTop = cartCoupons.scrollHeight;
 
             // Adiciona evento para remover o cupom
             cupom.querySelector('.remove-from-cart-btn').addEventListener('click', () => {
                 cartCoupons.removeChild(cupom);
+                totalCarrinho -= (peso * preco);
+                atualizarTotalCarrinho();
             });
         }
+    }
+
+    // Função para atualizar o total do carrinho
+    function atualizarTotalCarrinho() {
+        const totalElement = document.querySelector('.totals-section span:nth-child(2)');
+        totalElement.textContent = `Total: R$ ${totalCarrinho.toFixed(2)}`;
     }
 
     // Evento de input para pesquisa
