@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const cartCoupons = document.querySelector('.cart-coupons');
     let totalCarrinho = 0; // Variável para armazenar o total do carrinho
+    let produtosNoCarrinho = {}; // Armazenar os produtos no carrinho com o peso total
 
     document.getElementById('menu-back').addEventListener('click', () => {
         ipcRenderer.send('menu-principal');
@@ -43,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <td class="action-cell">
                                     <div class="input-button-wrapper">
                                         <input type="number" class="product-weight" placeholder="KG" min="0" max="${produto.quantidade}" />
-                                        <button class="add-to-cart-btn" data-id="${id}" data-codigo="${produto.codigo}" data-nome="${produto.nome}" data-preco="${produto.precoVenda}" data-quantidade="${produto.quantidade}">
+                                        <button class="add-to-cart-btn" data-id="${id}" data-codigo="${produto.codigo}" data-nome="${produto.nome}" data-preco="${produto.precoVenda}" data-quantidade="${produto.quantidade}" data-peso="${produto.peso}">
                                             <i class="fa fa-shopping-cart"></i><i class="fa fa-plus"></i>
                                         </button>
                                     </div>
@@ -74,6 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const nome = button.dataset.nome;
             const preco = parseFloat(button.dataset.preco);
             const quantidadeDisponivel = parseInt(button.dataset.quantidade);
+            const pesoMaximo = parseFloat(button.dataset.peso); // Adiciona o peso máximo
 
             // Captura o peso especificado
             const pesoInput = button.closest('.input-button-wrapper').querySelector('.product-weight');
@@ -85,11 +87,38 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // Verifica se a quantidade é maior que a disponível
-            if (peso > quantidadeDisponivel) {
-                alert(`A quantidade disponível é de ${quantidadeDisponivel} kg.`);
+            // Verifica se o produto já está no carrinho e quanto foi adicionado
+            const pesoAtualNoCarrinho = produtosNoCarrinho[produtoId] || 0;
+            const pesoTotal = pesoAtualNoCarrinho + peso;
+
+            // Verifica se a quantidade/peso total não ultrapassa o disponível
+            if (pesoTotal > pesoMaximo) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: '🚨 Limite de Quantidade Atingido 🚨',
+                    html: `
+                        <strong>${nome}</strong><br><br>
+                        Você já adicionou <strong>${pesoAtualNoCarrinho} kg</strong> ao carrinho.<br>
+                        O limite de peso disponível para este produto é de <strong>${pesoMaximo} kg</strong>.<br><br>
+                        <em>Por favor, revise a quantidade e tente novamente.</em><br><br>
+                        Caso precise de mais ajuda, entre em contato com nosso suporte!
+                    `,
+                    confirmButtonText: 'Ok, entendi',
+                    confirmButtonColor: '#3085d6',
+                    background: '#f9f9f9',
+                    iconColor: '#f1c40f',
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
                 return;
             }
+
+            // Adiciona o peso total do produto ao carrinho
+            if (!produtosNoCarrinho[produtoId]) {
+                produtosNoCarrinho[produtoId] = 0;
+            }
+            produtosNoCarrinho[produtoId] += peso;
 
             // Adiciona o produto ao carrinho
             const cupom = document.createElement('div');
@@ -118,6 +147,10 @@ document.addEventListener('DOMContentLoaded', () => {
             cupom.querySelector('.remove-from-cart-btn').addEventListener('click', () => {
                 cartCoupons.removeChild(cupom);
                 totalCarrinho -= (peso * preco);
+                produtosNoCarrinho[produtoId] -= peso;
+                if (produtosNoCarrinho[produtoId] <= 0) {
+                    delete produtosNoCarrinho[produtoId];
+                }
                 atualizarTotalCarrinho();
             });
         }
