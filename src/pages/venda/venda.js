@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                     <div class="input-button-wrapper">
                                         <input type="number" class="product-weight" placeholder="KG" min="0" max="${produto.quantidade}" />
                                         <button class="add-to-cart-btn" data-id="${id}" data-codigo="${produto.codigo}" data-nome="${produto.nome}" data-preco="${produto.precoVenda}" data-quantidade="${produto.quantidade}" data-peso="${produto.peso}">
-                                            <i class="fa fa-shopping-cart"></i><i class="fa fa-plus"></i>
+                                            <i class="fa fa-cart-plus"></i>
                                         </button>
                                     </div>
                                 </td>
@@ -98,7 +98,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     title: '🚨 Limite de Quantidade Atingido 🚨',
                     html: `
                         <strong>${nome}</strong><br><br>
-                        Você já adicionou <strong>${pesoAtualNoCarrinho} kg</strong> ao carrinho.<br>
                         O limite de peso disponível para este produto é de <strong>${pesoMaximo} kg</strong>.<br><br>
                         <em>Por favor, revise a quantidade e tente novamente.</em><br><br>
                         Caso precise de mais ajuda, entre em contato com nosso suporte!

@@ -255,36 +255,31 @@ table th {
 
 /* Estilo do botão com ícones */
 .add-to-cart-btn {
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 16px;
-    color: #4caf50;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 2px;
-    padding: 5px;
-    width: 40px; /* Largura fixa para consistência */
-    height: 40px; /* Altura fixa para alinhamento com o input */
-    border-radius: 5px;
-    position: relative;
-    background-color: #f5f5f5;
+    background-color: #28a745; /* Cor verde profissional */
+    color: white; /* Texto branco */
+    padding: 10px 20px; /* Espaçamento interno */
+    font-size: 16px; /* Tamanho da fonte */
+    border-radius: 5px; /* Bordas arredondadas */
+    border: none; /* Remover borda padrão */
+    display: inline-flex; /* Flexbox para alinhamento dos ícones e texto */
+    align-items: center; /* Alinha os itens no centro */
+    cursor: pointer; /* Cursor de ponteiro para interação */
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Transições suaves */
+}
+
+.add-to-cart-btn i {
+    margin-right: 10px; /* Espaçamento entre o ícone e o texto */
+    font-size: 20px; /* Tamanho do ícone */
 }
 
 .add-to-cart-btn:hover {
-    background-color: #e0e0e0;
-    color: #45a049;
+    background-color: #218838; /* Cor verde mais escura no hover */
+    transform: scale(1.05); /* Aumenta o botão levemente ao passar o mouse */
 }
 
-/* Ícones dentro do botão */
-.add-to-cart-btn i {
-    font-size: 18px;
-    line-height: 1;
+.add-to-cart-btn:focus {
+    outline: none; /* Remove o contorno ao clicar */
+    box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.5); /* Sombra suave ao focar */
 }
 
-.add-to-cart-btn i.fa-plus {
-    font-size: 12px; /* Ícone menor para o "+" */
-    position: absolute;
-    transform: translate(5px, -5px);
-}
+
