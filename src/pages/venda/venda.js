@@ -114,34 +114,41 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // Adiciona o peso total do produto ao carrinho
-            if (!produtosNoCarrinho[produtoId]) {
-                produtosNoCarrinho[produtoId] = 0;
+            // Se o produto já estiver no carrinho, apenas atualiza a quantidade de peso
+            if (produtosNoCarrinho[produtoId]) {
+                produtosNoCarrinho[produtoId] += peso;
+                // Atualiza o preço no carrinho
+                const cupomExistente = cartCoupons.querySelector(`[data-id="${produtoId}"]`);
+                const pesoAtualizado = produtosNoCarrinho[produtoId];
+                cupomExistente.querySelector('.coupon-weight').textContent = `Peso: ${pesoAtualizado.toFixed(2)} kg`;
+                cupomExistente.querySelector('.coupon-price').textContent = `Preço Total: R$ ${(pesoAtualizado * preco).toFixed(2)}`;
+            } else {
+                // Se não, cria um novo cupom para o produto
+                produtosNoCarrinho[produtoId] = peso;
+
+                const cupom = document.createElement('div');
+                cupom.classList.add('coupon');
+                cupom.setAttribute('data-id', produtoId);
+                cupom.innerHTML = `
+                    <div class="coupon-header">
+                        <span><strong>Código:</strong> ${codigo}</span>
+                        <span><strong>Nome:</strong> ${nome}</span>
+                    </div>
+                    <div class="coupon-details">
+                        <span class="coupon-weight"><strong>Peso:</strong> ${peso.toFixed(2)} kg</span>
+                        <span class="coupon-price"><strong>Preço Total:</strong> R$ ${(peso * preco).toFixed(2)}</span>
+                    </div>
+                    <button class="remove-from-cart-btn">Remover</button>
+                `;
+                cartCoupons.appendChild(cupom);
+
+                // Atualiza o total do carrinho
+                totalCarrinho += (peso * preco);
+                atualizarTotalCarrinho();
+
+                // Rolagem automática para o final
+                cartCoupons.scrollTop = cartCoupons.scrollHeight;
             }
-            produtosNoCarrinho[produtoId] += peso;
-
-            // Adiciona o produto ao carrinho
-            const cupom = document.createElement('div');
-            cupom.classList.add('coupon');
-            cupom.innerHTML = `
-                <div class="coupon-header">
-                    <span><strong>Código:</strong> ${codigo}</span>
-                    <span><strong>Nome:</strong> ${nome}</span>
-                </div>
-                <div class="coupon-details">
-                    <span><strong>Peso:</strong> ${peso.toFixed(2)} kg</span>
-                    <span><strong>Preço Total:</strong> R$ ${(peso * preco).toFixed(2)}</span>
-                </div>
-                <button class="remove-from-cart-btn">Remover</button>
-            `;
-            cartCoupons.appendChild(cupom);
-
-            // Atualiza o total do carrinho
-            totalCarrinho += (peso * preco);
-            atualizarTotalCarrinho();
-
-            // Rolagem automática para o final
-            cartCoupons.scrollTop = cartCoupons.scrollHeight;
 
             // Adiciona evento para remover o cupom
             cupom.querySelector('.remove-from-cart-btn').addEventListener('click', () => {
