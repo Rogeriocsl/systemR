@@ -66,7 +66,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
     }
 
-    // Função para adicionar ao carrinho
     function adicionarAoCarrinho(event) {
         const button = event.target.closest('.add-to-cart-btn');
         if (button) {
@@ -106,43 +105,54 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             // Se o produto já estiver no carrinho, apenas atualiza a quantidade de peso
-            let cupom;
             if (produtosNoCarrinho[produtoId]) {
-                produtosNoCarrinho[produtoId] += peso;
+                produtosNoCarrinho[produtoId] += peso; // Atualiza o peso total do produto no carrinho
+
                 // Atualiza o preço no carrinho
                 const cupomExistente = cartCoupons.querySelector(`[data-id="${produtoId}"]`);
-                const pesoAtualizado = produtosNoCarrinho[produtoId];
-                cupomExistente.querySelector('.coupon-weight').textContent = `Peso: ${pesoAtualizado.toFixed(2)} kg`;
-                cupomExistente.querySelector('.coupon-price').textContent = `Preço Total: R$ ${(pesoAtualizado * preco).toFixed(2)}`;
+                if (cupomExistente) {
+                    const pesoAtualizado = produtosNoCarrinho[produtoId];
+                    const subtotal = pesoAtualizado * preco;
+                    cupomExistente.querySelector('.coupon-weight').textContent = `Peso: ${pesoAtualizado.toFixed(2)} kg`;
+                    cupomExistente.querySelector('.coupon-price').textContent = `Preço Total: R$ ${subtotal.toFixed(2)}`;
+                }
             } else {
                 // Se não, cria um novo cupom para o produto
                 produtosNoCarrinho[produtoId] = peso;
 
-                cupom = document.createElement('div');
+                const cupom = document.createElement('div');
                 cupom.classList.add('coupon');
                 cupom.setAttribute('data-id', produtoId);
                 cupom.innerHTML = `
-                <div class="coupon-header">
-                    <span><strong>Código:</strong> ${codigo}</span>
-                    <span><strong>Nome:</strong> ${nome}</span>
-                </div>
-                <div class="coupon-details">
-                    <span class="coupon-weight"><strong>Peso:</strong> ${peso.toFixed(2)} kg</span>
-                    <span class="coupon-price"><strong>Preço Total:</strong> R$ ${(peso * preco).toFixed(2)}</span>
-                </div>
-                <button class="remove-from-cart-btn">Remover</button>
-            `;
+                    <div class="coupon-header">
+                        <span><strong>Código:</strong> ${codigo}</span>
+                        <span><strong>Nome:</strong> ${nome}</span>
+                    </div>
+                    <div class="coupon-details">
+                        <span class="coupon-weight"><strong>Peso:</strong> ${peso.toFixed(2)} kg</span>
+                        <span class="coupon-price"><strong>Preço Total:</strong> R$ ${(peso * preco).toFixed(2)}</span>
+                    </div>
+                    <button class="remove-from-cart-btn">Remover</button>
+                `;
                 cartCoupons.appendChild(cupom);
-
-                // Atualiza o total do carrinho
-                totalCarrinho += (peso * preco);
-                atualizarTotalCarrinho();
-
-                // Rolagem automática para o final
-                cartCoupons.scrollTop = cartCoupons.scrollHeight;
             }
 
+            // Recalcula o total do carrinho
+            totalCarrinho = 0; // Reseta o total
+            Object.keys(produtosNoCarrinho).forEach((produtoId) => {
+                const pesoNoCarrinho = produtosNoCarrinho[produtoId];
+                const precoProduto = parseFloat(button.dataset.preco); // Pega o preço do produto
+                totalCarrinho += pesoNoCarrinho * precoProduto; // Recalcula o total
+            });
+
+            // Atualiza o total do carrinho na tela
+            atualizarTotalCarrinho();
+
+            // Rolagem automática para o final
+            cartCoupons.scrollTop = cartCoupons.scrollHeight;
+
             // Adiciona evento para remover o cupom
+            const cupom = cartCoupons.querySelector(`[data-id="${produtoId}"]`); // Acessa diretamente o cupom já criado ou atualizado
             cupom.querySelector('.remove-from-cart-btn').addEventListener('click', () => {
                 cartCoupons.removeChild(cupom);
                 totalCarrinho -= (peso * preco);
@@ -154,7 +164,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
     }
-
 
     // Função para atualizar o total do carrinho
     function atualizarTotalCarrinho() {
@@ -283,6 +292,39 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Função para cancelar a venda
+    function cancelarVenda() {
+        Swal.fire({
+            title: 'Cancelar Venda?',
+            text: 'Tem certeza de que deseja cancelar a venda? Todos os itens serão removidos do carrinho.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sim, cancelar',
+            cancelButtonText: 'Não, voltar',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Limpar carrinho
+                cartCoupons.innerHTML = '';
+                produtosNoCarrinho = {};
+                totalCarrinho = 0;
+                atualizarTotalCarrinho();
+
+                // Limpar o campo de busca e a lista de resultados
+                document.getElementById('search-input').value = ''; // Limpa o campo de busca
+                const listaProdutos = document.querySelector('.product-list tbody');
+                listaProdutos.innerHTML = ''; // Limpa a lista de produtos exibidos
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Venda Cancelada',
+                    text: 'A venda foi cancelada e o carrinho foi limpo.',
+                });
+            }
+        });
+    }
+
+    // Evento para cancelar a venda
+    document.getElementById('cancelar-venda').addEventListener('click', cancelarVenda); // Botão para cancelar a venda
 
     // Evento de input para pesquisa
     document.getElementById('search-input').addEventListener('input', pesquisarProdutos);

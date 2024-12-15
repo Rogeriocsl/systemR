@@ -45,6 +45,7 @@ body {
     height: 100vh;
 }
 
+
 .pdv-container {
     width: 90%;
     height: 700px;
@@ -53,10 +54,20 @@ body {
     border-radius: 10px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
     padding: 20px;
-    margin-top: 40px;
+
+    position: absolute;
+    /* Garante que ele fique fixo */
+    top: 50%;
+    /* Posiciona o topo no meio da tela */
+    left: 50%;
+    /* Posiciona o centro no meio da tela */
+    transform: translate(-50%, -50%);
+    /* Centraliza o elemento */
+
     display: flex;
     flex-direction: column;
 }
+
 
 .pdv-header {
     text-align: center;
@@ -92,12 +103,17 @@ body {
 }
 
 .cart-coupons {
-    max-height: 350px; /* Define a altura máxima */
-    overflow-y: auto; /* Ativa a barra de rolagem vertical */
-    overflow-x: hidden; /* Evita a barra de rolagem horizontal */
+    max-height: 350px;
+    /* Define a altura máxima */
+    overflow-y: auto;
+    /* Ativa a barra de rolagem vertical */
+    overflow-x: hidden;
+    /* Evita a barra de rolagem horizontal */
     display: flex;
-    flex-direction: column; /* Garante que os itens sejam empilhados */
-    gap: 5px; /* Espaçamento entre os itens */
+    flex-direction: column;
+    /* Garante que os itens sejam empilhados */
+    gap: 5px;
+    /* Espaçamento entre os itens */
 }
 
 
@@ -150,7 +166,7 @@ body {
 
 }
 
-.search-input{
+.search-input {
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
@@ -171,7 +187,8 @@ table {
     border-collapse: collapse;
 }
 
-table th, table td {
+table th,
+table td {
     text-align: left;
     padding: 10px;
     border: 1px solid #ddd;
@@ -232,13 +249,15 @@ table th {
 .input-button-wrapper {
     display: flex;
     align-items: center;
-    gap: 8px; /* Espaço entre o input e o botão */
+    gap: 8px;
+    /* Espaço entre o input e o botão */
 }
 
 /* Estilo do input */
 .product-weight {
     width: 80px;
-    height: 40px; /* Define a altura máxima */
+    height: 40px;
+    /* Define a altura máxima */
     padding: 5px;
     border: 1px solid #ccc;
     border-radius: 5px;
@@ -255,31 +274,45 @@ table th {
 
 /* Estilo do botão com ícones */
 .add-to-cart-btn {
-    background-color: #28a745; /* Cor verde profissional */
-    color: white; /* Texto branco */
-    padding: 10px 20px; /* Espaçamento interno */
-    font-size: 16px; /* Tamanho da fonte */
-    border-radius: 5px; /* Bordas arredondadas */
-    border: none; /* Remover borda padrão */
-    display: inline-flex; /* Flexbox para alinhamento dos ícones e texto */
-    align-items: center; /* Alinha os itens no centro */
-    cursor: pointer; /* Cursor de ponteiro para interação */
-    transition: background-color 0.3s ease, transform 0.2s ease; /* Transições suaves */
+    background-color: #28a745;
+    /* Cor verde profissional */
+    color: white;
+    /* Texto branco */
+    padding: 10px 20px;
+    /* Espaçamento interno */
+    font-size: 16px;
+    /* Tamanho da fonte */
+    border-radius: 5px;
+    /* Bordas arredondadas */
+    border: none;
+    /* Remover borda padrão */
+    display: inline-flex;
+    /* Flexbox para alinhamento dos ícones e texto */
+    align-items: center;
+    /* Alinha os itens no centro */
+    cursor: pointer;
+    /* Cursor de ponteiro para interação */
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    /* Transições suaves */
 }
 
 .add-to-cart-btn i {
-    margin-right: 10px; /* Espaçamento entre o ícone e o texto */
-    font-size: 20px; /* Tamanho do ícone */
+    margin-right: 10px;
+    /* Espaçamento entre o ícone e o texto */
+    font-size: 20px;
+    /* Tamanho do ícone */
 }
 
 .add-to-cart-btn:hover {
-    background-color: #218838; /* Cor verde mais escura no hover */
-    transform: scale(1.05); /* Aumenta o botão levemente ao passar o mouse */
+    background-color: #218838;
+    /* Cor verde mais escura no hover */
+    transform: scale(1.05);
+    /* Aumenta o botão levemente ao passar o mouse */
 }
 
 .add-to-cart-btn:focus {
-    outline: none; /* Remove o contorno ao clicar */
-    box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.5); /* Sombra suave ao focar */
+    outline: none;
+    /* Remove o contorno ao clicar */
+    box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.5);
+    /* Sombra suave ao focar */
 }
-
-
