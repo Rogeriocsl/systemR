@@ -162,6 +162,7 @@ document.addEventListener('DOMContentLoaded', () => {
         totalElement.textContent = `Total: R$ ${totalCarrinho.toFixed(2)}`;
     }
 
+    // Função para finalizar a venda
     function finalizarVenda() {
         if (Object.keys(produtosNoCarrinho).length === 0) {
             Swal.fire({
@@ -171,21 +172,21 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             return;
         }
-    
+
         // Verificação de estoque antes de confirmar a venda
         let erroEstoque = false;
         const produtosParaAtualizar = [];
-    
+
         Object.keys(produtosNoCarrinho).forEach((produtoId) => {
             const pesoNoCarrinho = produtosNoCarrinho[produtoId];
             const produtoRef = ref(database, `produtos/${produtoId}`);
-            
+
             get(produtoRef)
                 .then((snapshot) => {
                     if (snapshot.exists()) {
                         const produto = snapshot.val();
                         const pesoAtual = parseFloat(produto.peso); // Converte o peso atual para número
-                        
+
                         // Verifica se há estoque suficiente
                         if (isNaN(pesoAtual) || pesoAtual < pesoNoCarrinho) {
                             erroEstoque = true;
@@ -205,10 +206,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     console.error('Erro ao buscar o produto no Firebase:', error);
                 });
         });
-    
+
         // Se houver erro de estoque, não prosseguir com a venda
         if (erroEstoque) return;
-    
+
         // Se o estoque for suficiente, confirma a venda
         Swal.fire({
             title: 'Confirmar Venda',
@@ -227,20 +228,20 @@ document.addEventListener('DOMContentLoaded', () => {
                     const produtoInfo = cartCoupons.querySelector(`[data-id="${produtoId}"]`);
                     const nomeProduto = produtoInfo.querySelector('.coupon-header').children[1].textContent.split(':')[1].trim(); // Nome do produto
                     const quantidadeProduto = produto; // A quantidade no carrinho é o peso (em kg)
-    
+
                     return {
                         produtoId,
                         nome: nomeProduto,
                         quantidade: quantidadeProduto,
                     };
                 });
-    
+
                 const novaVenda = {
                     dataHora,
                     produtos: vendaDetalhes,
                     total: totalCarrinho,
                 };
-    
+
                 push(vendasRef, novaVenda).then(() => {
                     // Atualizar o peso dos produtos no Firebase após gravar a venda
                     produtosParaAtualizar.forEach(({ produtoId, novoPeso }) => {
@@ -253,18 +254,23 @@ document.addEventListener('DOMContentLoaded', () => {
                                 console.error('Erro ao atualizar o peso do produto:', error);
                             });
                     });
-    
+
                     Swal.fire({
                         icon: 'success',
                         title: 'Venda Finalizada',
                         text: 'A venda foi concluída com sucesso!',
                     });
-    
+
                     // Limpar carrinho
                     cartCoupons.innerHTML = '';
                     produtosNoCarrinho = {};
                     totalCarrinho = 0;
                     atualizarTotalCarrinho();
+
+                    // Limpar o campo de busca e a lista de resultados
+                    document.getElementById('search-input').value = ''; // Limpa o campo de busca
+                    const listaProdutos = document.querySelector('.product-list tbody');
+                    listaProdutos.innerHTML = ''; // Limpa a lista de produtos exibidos
                 }).catch((error) => {
                     console.error('Erro ao salvar a venda:', error);
                     Swal.fire({
@@ -276,8 +282,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-    
-
 
 
     // Evento de input para pesquisa
