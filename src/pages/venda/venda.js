@@ -106,6 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             // Se o produto já estiver no carrinho, apenas atualiza a quantidade de peso
+            let cupom;
             if (produtosNoCarrinho[produtoId]) {
                 produtosNoCarrinho[produtoId] += peso;
                 // Atualiza o preço no carrinho
@@ -117,20 +118,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Se não, cria um novo cupom para o produto
                 produtosNoCarrinho[produtoId] = peso;
 
-                const cupom = document.createElement('div');
+                cupom = document.createElement('div');
                 cupom.classList.add('coupon');
                 cupom.setAttribute('data-id', produtoId);
                 cupom.innerHTML = `
-                    <div class="coupon-header">
-                        <span><strong>Código:</strong> ${codigo}</span>
-                        <span><strong>Nome:</strong> ${nome}</span>
-                    </div>
-                    <div class="coupon-details">
-                        <span class="coupon-weight"><strong>Peso:</strong> ${peso.toFixed(2)} kg</span>
-                        <span class="coupon-price"><strong>Preço Total:</strong> R$ ${(peso * preco).toFixed(2)}</span>
-                    </div>
-                    <button class="remove-from-cart-btn">Remover</button>
-                `;
+                <div class="coupon-header">
+                    <span><strong>Código:</strong> ${codigo}</span>
+                    <span><strong>Nome:</strong> ${nome}</span>
+                </div>
+                <div class="coupon-details">
+                    <span class="coupon-weight"><strong>Peso:</strong> ${peso.toFixed(2)} kg</span>
+                    <span class="coupon-price"><strong>Preço Total:</strong> R$ ${(peso * preco).toFixed(2)}</span>
+                </div>
+                <button class="remove-from-cart-btn">Remover</button>
+            `;
                 cartCoupons.appendChild(cupom);
 
                 // Atualiza o total do carrinho
@@ -154,6 +155,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+
     // Função para atualizar o total do carrinho
     function atualizarTotalCarrinho() {
         const totalElement = document.querySelector('.totals-section span:nth-child(2)');
@@ -169,7 +171,45 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             return;
         }
-
+    
+        // Verificação de estoque antes de confirmar a venda
+        let erroEstoque = false;
+        const produtosParaAtualizar = [];
+    
+        Object.keys(produtosNoCarrinho).forEach((produtoId) => {
+            const pesoNoCarrinho = produtosNoCarrinho[produtoId];
+            const produtoRef = ref(database, `produtos/${produtoId}`);
+            
+            get(produtoRef)
+                .then((snapshot) => {
+                    if (snapshot.exists()) {
+                        const produto = snapshot.val();
+                        const pesoAtual = parseFloat(produto.peso); // Converte o peso atual para número
+                        
+                        // Verifica se há estoque suficiente
+                        if (isNaN(pesoAtual) || pesoAtual < pesoNoCarrinho) {
+                            erroEstoque = true;
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Erro de Estoque',
+                                text: `O produto ${produto.nome} não possui peso suficiente em estoque.`,
+                            });
+                        } else {
+                            // Armazena as atualizações de estoque
+                            const novoPeso = pesoAtual - pesoNoCarrinho;
+                            produtosParaAtualizar.push({ produtoId, novoPeso });
+                        }
+                    }
+                })
+                .catch((error) => {
+                    console.error('Erro ao buscar o produto no Firebase:', error);
+                });
+        });
+    
+        // Se houver erro de estoque, não prosseguir com a venda
+        if (erroEstoque) return;
+    
+        // Se o estoque for suficiente, confirma a venda
         Swal.fire({
             title: 'Confirmar Venda',
             text: `Total: R$ ${totalCarrinho.toFixed(2)}`,
@@ -187,62 +227,39 @@ document.addEventListener('DOMContentLoaded', () => {
                     const produtoInfo = cartCoupons.querySelector(`[data-id="${produtoId}"]`);
                     const nomeProduto = produtoInfo.querySelector('.coupon-header').children[1].textContent.split(':')[1].trim(); // Nome do produto
                     const quantidadeProduto = produto; // A quantidade no carrinho é o peso (em kg)
-
+    
                     return {
                         produtoId,
                         nome: nomeProduto,
                         quantidade: quantidadeProduto,
                     };
                 });
-
+    
                 const novaVenda = {
                     dataHora,
                     produtos: vendaDetalhes,
                     total: totalCarrinho,
                 };
-
+    
                 push(vendasRef, novaVenda).then(() => {
-                    // Atualizar o peso dos produtos no Firebase
-                    Object.keys(produtosNoCarrinho).forEach((produtoId) => {
+                    // Atualizar o peso dos produtos no Firebase após gravar a venda
+                    produtosParaAtualizar.forEach(({ produtoId, novoPeso }) => {
                         const produtoRef = ref(database, `produtos/${produtoId}`);
-                        get(produtoRef)
-                            .then((snapshot) => {
-                                if (snapshot.exists()) {
-                                    const produto = snapshot.val();
-                                    const pesoAtual = parseFloat(produto.peso); // Converte o peso atual para número
-                                    const pesoNoCarrinho = produtosNoCarrinho[produtoId]; // Peso comprado
-
-                                    if (isNaN(pesoAtual) || pesoAtual < pesoNoCarrinho) {
-                                        Swal.fire({
-                                            icon: 'error',
-                                            title: 'Erro de Estoque',
-                                            text: `O produto ${produto.nome} não possui peso suficiente em estoque.`,
-                                        });
-                                        return;
-                                    }
-
-                                    const novoPeso = pesoAtual - pesoNoCarrinho;
-
-                                    update(produtoRef, { peso: novoPeso.toFixed(3) }) // Atualiza o peso no Firebase
-                                        .then(() => {
-                                            console.log(`Peso atualizado para o produto ${produto.nome}: ${novoPeso} kg`);
-                                        })
-                                        .catch((error) => {
-                                            console.error('Erro ao atualizar o peso do produto:', error);
-                                        });
-                                }
+                        update(produtoRef, { peso: novoPeso.toFixed(3) }) // Atualiza o peso no Firebase
+                            .then(() => {
+                                console.log(`Peso atualizado para o produto ${produtoId}: ${novoPeso} kg`);
                             })
                             .catch((error) => {
-                                console.error('Erro ao buscar o produto no Firebase:', error);
+                                console.error('Erro ao atualizar o peso do produto:', error);
                             });
                     });
-
+    
                     Swal.fire({
                         icon: 'success',
                         title: 'Venda Finalizada',
                         text: 'A venda foi concluída com sucesso!',
                     });
-
+    
                     // Limpar carrinho
                     cartCoupons.innerHTML = '';
                     produtosNoCarrinho = {};
@@ -259,6 +276,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+    
 
 
 
