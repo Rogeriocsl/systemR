@@ -11,60 +11,78 @@ document.addEventListener('DOMContentLoaded', () => {
         ipcRenderer.send('menu-principal');
     });
 
+let timeout; // Variável de debounce
+
     // Função para pesquisar produtos no Firebase
     function pesquisarProdutos() {
         const searchValue = document.getElementById('search-input').value.toLowerCase();
+        if (!searchValue) return; // Se o campo estiver vazio, não faz a busca
+    
         const produtosRef = ref(database, 'produtos');
-
-        get(produtosRef)
-            .then((snapshot) => {
-                if (snapshot.exists()) {
-                    const produtos = snapshot.val();
-                    const listaProdutos = document.querySelector('.product-list tbody');
-                    listaProdutos.innerHTML = ''; // Limpa os resultados anteriores
-
-                    let encontrou = false;
-
-                    Object.keys(produtos).forEach((id) => {
-                        const produto = produtos[id];
-                        const codigo = produto.codigo.toLowerCase();
-                        const nome = produto.nome.toLowerCase();
-
-                        if (codigo === searchValue || nome === searchValue) {
-                            encontrou = true;
-
-                            // Cria a linha do produto encontrado
-                            const itemProduto = document.createElement('tr');
-                            itemProduto.innerHTML = `
-                                <td>${produto.codigo}</td>
-                                <td>${produto.nome}</td>
-                                <td>${produto.descricao}</td>
-                                <td>R$ ${produto.precoVenda}</td>
-                                <td>${produto.peso} kg</td>
-                                <td class="action-cell">
-                                    <div class="input-button-wrapper">
-                                        <input type="number" class="product-weight" placeholder="KG" min="0" max="${produto.quantidade}" />
-                                        <button class="add-to-cart-btn" data-id="${id}" data-codigo="${produto.codigo}" data-nome="${produto.nome}" data-preco="${produto.precoVenda}" data-quantidade="${produto.quantidade}" data-peso="${produto.peso}">
-                                            <i class="fa fa-cart-plus"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            `;
-                            listaProdutos.appendChild(itemProduto);
+        const listaProdutos = document.querySelector('.product-list tbody');
+        
+        // Mostra "Pesquisando..." enquanto os dados estão sendo carregados
+        listaProdutos.innerHTML = '<tr><td colspan="6">Pesquisando...</td></tr>';
+    
+        clearTimeout(timeout);
+        timeout = setTimeout(() => {
+            get(produtosRef)
+                .then((snapshot) => {
+                    if (snapshot.exists()) {
+                        const produtos = snapshot.val();
+                        listaProdutos.innerHTML = ''; // Limpa os resultados anteriores
+    
+                        let encontrou = false;
+    
+                        Object.keys(produtos).forEach((id) => {
+                            const produto = produtos[id];
+                            const codigo = produto.codigo.toLowerCase();
+                            const nome = produto.nome.toLowerCase();
+                            const descricao = produto.descricao.toLowerCase();
+    
+                            // Modifica a lógica para pesquisar em nome, código ou descrição
+                            if (codigo.includes(searchValue) || nome.includes(searchValue) || descricao.includes(searchValue)) {
+                                encontrou = true;
+    
+                                // Cria a linha do produto encontrado
+                                const itemProduto = document.createElement('tr');
+                                itemProduto.innerHTML = `
+                                    <td>${produto.codigo}</td>
+                                    <td>${produto.nome}</td>
+                                    <td>${produto.descricao}</td>
+                                    <td>R$ ${produto.precoVenda}</td>
+                                    <td>${produto.peso} kg</td>
+                                    <td class="action-cell">
+                                        <div class="input-button-wrapper">
+                                            <input type="number" class="product-weight" placeholder="KG" min="0" max="${produto.quantidade}" />
+                                            <button class="add-to-cart-btn" data-id="${id}" data-codigo="${produto.codigo}" data-nome="${produto.nome}" data-preco="${produto.precoVenda}" data-quantidade="${produto.quantidade}" data-peso="${produto.peso}">
+                                                <i class="fa fa-cart-plus"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                `;
+                                listaProdutos.appendChild(itemProduto);
+                            }
+                        });
+    
+                        if (!encontrou) {
+                            listaProdutos.innerHTML = '<tr><td colspan="6">Nenhum produto encontrado.</td></tr>';
                         }
-                    });
-
-                    if (!encontrou) {
-                        listaProdutos.innerHTML = '<tr><td colspan="6">Produto não encontrado.</td></tr>';
+                    } else {
+                        listaProdutos.innerHTML = '<tr><td colspan="6">Nenhum produto disponível no momento.</td></tr>';
+                        console.error('Não há produtos cadastrados no Firebase.');
                     }
-                } else {
-                    console.error('Não há produtos cadastrados no Firebase.');
-                }
-            })
-            .catch((error) => {
-                console.error('Erro ao buscar produtos no Firebase:', error);
-            });
+                })
+                .catch((error) => {
+                    console.error('Erro ao buscar produtos no Firebase:', error);
+                    listaProdutos.innerHTML = '<tr><td colspan="6">Erro ao buscar produtos. Tente novamente.</td></tr>';
+                });
+        }, 300);  // Delay de 300ms após o último caractere
     }
+    
+    // Evento de input para pesquisa
+    document.getElementById('search-input').addEventListener('input', pesquisarProdutos);
+    
 
     function adicionarAoCarrinho(event) {
         const button = event.target.closest('.add-to-cart-btn');
@@ -82,9 +100,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Valida o peso
             if (isNaN(peso) || peso <= 0) {
-                alert('Por favor, insira um peso válido.');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Peso inválido',
+                    text: 'Por favor, insira um peso válido.',
+                }).then(() => {
+                    // Recoloca o foco no campo após o erro
+                    pesoInput.focus();
+                });
                 return;
             }
+
 
             // Verifica se o produto já está no carrinho e quanto foi adicionado
             const pesoAtualNoCarrinho = produtosNoCarrinho[produtoId] || 0;
@@ -166,131 +192,156 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Função para atualizar o total do carrinho
-    function atualizarTotalCarrinho() {
-        const totalElement = document.querySelector('.totals-section span:nth-child(2)');
-        totalElement.textContent = `Total: R$ ${totalCarrinho.toFixed(2)}`;
-    }
-
-    // Função para finalizar a venda
-    function finalizarVenda() {
-        if (Object.keys(produtosNoCarrinho).length === 0) {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Carrinho Vazio',
-                text: 'Adicione produtos ao carrinho antes de finalizar a venda.',
-            });
-            return;
-        }
-
-        // Verificação de estoque antes de confirmar a venda
-        let erroEstoque = false;
-        const produtosParaAtualizar = [];
-
-        Object.keys(produtosNoCarrinho).forEach((produtoId) => {
-            const pesoNoCarrinho = produtosNoCarrinho[produtoId];
-            const produtoRef = ref(database, `produtos/${produtoId}`);
-
-            get(produtoRef)
-                .then((snapshot) => {
-                    if (snapshot.exists()) {
-                        const produto = snapshot.val();
-                        const pesoAtual = parseFloat(produto.peso); // Converte o peso atual para número
-
-                        // Verifica se há estoque suficiente
-                        if (isNaN(pesoAtual) || pesoAtual < pesoNoCarrinho) {
-                            erroEstoque = true;
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Erro de Estoque',
-                                text: `O produto ${produto.nome} não possui peso suficiente em estoque.`,
-                            });
-                        } else {
-                            // Armazena as atualizações de estoque
-                            const novoPeso = pesoAtual - pesoNoCarrinho;
-                            produtosParaAtualizar.push({ produtoId, novoPeso });
-                        }
-                    }
-                })
-                .catch((error) => {
-                    console.error('Erro ao buscar o produto no Firebase:', error);
-                });
-        });
-
-        // Se houver erro de estoque, não prosseguir com a venda
-        if (erroEstoque) return;
-
-        // Se o estoque for suficiente, confirma a venda
-        Swal.fire({
-            title: 'Confirmar Venda',
-            text: `Total: R$ ${totalCarrinho.toFixed(2)}`,
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonText: 'Confirmar',
-            cancelButtonText: 'Cancelar',
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // Salvar venda no Firebase
-                const vendasRef = ref(database, 'vendas');
-                const dataHora = new Date().toLocaleString('pt-BR'); // Formato de data e hora pt-BR
-                const vendaDetalhes = Object.keys(produtosNoCarrinho).map((produtoId) => {
-                    const produto = produtosNoCarrinho[produtoId];
-                    const produtoInfo = cartCoupons.querySelector(`[data-id="${produtoId}"]`);
-                    const nomeProduto = produtoInfo.querySelector('.coupon-header').children[1].textContent.split(':')[1].trim(); // Nome do produto
-                    const quantidadeProduto = produto; // A quantidade no carrinho é o peso (em kg)
-
-                    return {
-                        produtoId,
-                        nome: nomeProduto,
-                        quantidade: quantidadeProduto,
-                    };
-                });
-
-                const novaVenda = {
-                    dataHora,
-                    produtos: vendaDetalhes,
-                    total: totalCarrinho,
-                };
-
-                push(vendasRef, novaVenda).then(() => {
-                    // Atualizar o peso dos produtos no Firebase após gravar a venda
-                    produtosParaAtualizar.forEach(({ produtoId, novoPeso }) => {
-                        const produtoRef = ref(database, `produtos/${produtoId}`);
-                        update(produtoRef, { peso: novoPeso.toFixed(3) }) // Atualiza o peso no Firebase
-                            .then(() => {
-                                console.log(`Peso atualizado para o produto ${produtoId}: ${novoPeso} kg`);
-                            })
-                            .catch((error) => {
-                                console.error('Erro ao atualizar o peso do produto:', error);
-                            });
-                    });
-
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Venda Finalizada',
-                        text: 'A venda foi concluída com sucesso!',
-                    });
-
-                    // Limpar carrinho
-                    cartCoupons.innerHTML = '';
-                    produtosNoCarrinho = {};
-                    totalCarrinho = 0;
-                    atualizarTotalCarrinho();
-
-                    // Limpar o campo de busca e a lista de resultados
-                    document.getElementById('search-input').value = ''; // Limpa o campo de busca
-                    const listaProdutos = document.querySelector('.product-list tbody');
-                    listaProdutos.innerHTML = ''; // Limpa a lista de produtos exibidos
-                }).catch((error) => {
-                    console.error('Erro ao salvar a venda:', error);
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Erro',
-                        text: 'Ocorreu um erro ao finalizar a venda. Tente novamente mais tarde.',
-                    });
-                });
+// Função para atualizar o total do carrinho
+function atualizarTotalCarrinho() {
+    totalCarrinho = 0;  // Reseta o total antes de calcular
+    Object.keys(produtosNoCarrinho).forEach((produtoId) => {
+        const pesoNoCarrinho = produtosNoCarrinho[produtoId];
+        
+        // Busca o preço do produto no carrinho
+        const produtoRef = ref(database, `produtos/${produtoId}`);
+        get(produtoRef).then((snapshot) => {
+            if (snapshot.exists()) {
+                const produto = snapshot.val();
+                const precoProduto = parseFloat(produto.precoVenda);  // Preço do produto no Firebase
+                
+                // Adiciona o preço total do produto ao total do carrinho
+                totalCarrinho += pesoNoCarrinho * precoProduto; 
+                
+                // Atualiza o total na tela
+                const totalElement = document.querySelector('.totals-section span:nth-child(1');
+                totalElement.textContent = `Total: R$ ${totalCarrinho.toFixed(2)}`;
             }
+        }).catch((error) => {
+            console.error('Erro ao buscar preço do produto no Firebase:', error);
         });
+    });
+}
+
+
+// Função para finalizar a venda
+function finalizarVenda() {
+    if (Object.keys(produtosNoCarrinho).length === 0) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Carrinho Vazio',
+            text: 'Adicione produtos ao carrinho antes de finalizar a venda.',
+        });
+        return;
     }
+
+    // Verificação de estoque antes de confirmar a venda
+    let erroEstoque = false;
+    const produtosParaAtualizar = [];
+
+    Object.keys(produtosNoCarrinho).forEach((produtoId) => {
+        const pesoNoCarrinho = produtosNoCarrinho[produtoId];
+        const produtoRef = ref(database, `produtos/${produtoId}`);
+
+        get(produtoRef)
+            .then((snapshot) => {
+                if (snapshot.exists()) {
+                    const produto = snapshot.val();
+                    const pesoAtual = parseFloat(produto.peso); // Converte o peso atual para número
+
+                    // Verifica se há estoque suficiente
+                    if (isNaN(pesoAtual) || pesoAtual < pesoNoCarrinho) {
+                        erroEstoque = true;
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Erro de Estoque',
+                            text: `O produto ${produto.nome} não possui peso suficiente em estoque.`,
+                        });
+                    } else {
+                        // Armazena as atualizações de estoque
+                        const novoPeso = pesoAtual - pesoNoCarrinho;
+                        produtosParaAtualizar.push({ produtoId, novoPeso });
+                    }
+                }
+            })
+            .catch((error) => {
+                console.error('Erro ao buscar o produto no Firebase:', error);
+            });
+    });
+
+    // Se houver erro de estoque, não prosseguir com a venda
+    if (erroEstoque) return;
+
+    // Se o estoque for suficiente, confirma a venda
+    Swal.fire({
+        title: 'Confirmar Venda',
+        text: `Total: R$ ${totalCarrinho.toFixed(2)}`,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Confirmar',
+        cancelButtonText: 'Cancelar',
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Salvar venda no Firebase
+            const vendasRef = ref(database, 'vendas');
+            const dataHora = new Date().toLocaleString('pt-BR'); // Formato de data e hora pt-BR
+            const vendaDetalhes = Object.keys(produtosNoCarrinho).map((produtoId) => {
+                const produto = produtosNoCarrinho[produtoId];
+                const produtoInfo = cartCoupons.querySelector(`[data-id="${produtoId}"]`);
+                const nomeProduto = produtoInfo.querySelector('.coupon-header').children[1].textContent.split(':')[1].trim(); // Nome do produto
+                const quantidadeProduto = produto; // A quantidade no carrinho é o peso (em kg)
+
+                return {
+                    produtoId,
+                    nome: nomeProduto,
+                    quantidade: quantidadeProduto,
+                    preco: parseFloat(produtoInfo.querySelector('.coupon-price').textContent.replace('Preço Total: R$', '').trim()),
+                };
+            });
+
+            const novaVenda = {
+                dataHora,
+                produtos: vendaDetalhes,
+                total: totalCarrinho,
+            };
+
+            // Salva a venda no Firebase
+            push(vendasRef, novaVenda).then(() => {
+                // Atualizar o peso dos produtos no Firebase após gravar a venda
+                produtosParaAtualizar.forEach(({ produtoId, novoPeso }) => {
+                    const produtoRef = ref(database, `produtos/${produtoId}`);
+                    update(produtoRef, { peso: novoPeso.toFixed(3) }) // Atualiza o peso no Firebase
+                        .then(() => {
+                            console.log(`Peso atualizado para o produto ${produtoId}: ${novoPeso} kg`);
+                        })
+                        .catch((error) => {
+                            console.error('Erro ao atualizar o peso do produto:', error);
+                        });
+                });
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Venda Finalizada',
+                    text: 'A venda foi concluída com sucesso!',
+                });
+
+                // Limpar carrinho
+                cartCoupons.innerHTML = '';
+                produtosNoCarrinho = {};
+                totalCarrinho = 0;
+                atualizarTotalCarrinho();
+
+                // Limpar o campo de busca e a lista de resultados
+                document.getElementById('search-input').value = ''; // Limpa o campo de busca
+                const listaProdutos = document.querySelector('.product-list tbody');
+                listaProdutos.innerHTML = ''; // Limpa a lista de produtos exibidos
+            }).catch((error) => {
+                console.error('Erro ao salvar a venda:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro',
+                    text: 'Ocorreu um erro ao finalizar a venda. Tente novamente mais tarde.',
+                });
+            });
+        }
+    });
+}
+
 
     // Função para cancelar a venda
     function cancelarVenda() {
