@@ -1,7 +1,5 @@
 const IMask = require('imask').default;
 const { ipcRenderer } = require('electron');
-
-
 const { database } = require('../../firebaseConfig');
 const { ref, push } = require('firebase/database');
 
@@ -51,52 +49,48 @@ function toggleButtonLoading(button, isLoading) {
 }
 
 // FIREBASE
-
-
 document.addEventListener('DOMContentLoaded', () => {
     // Máscara para o preço de compra
     const priceBuyInput = document.getElementById('product-price-buy');
-    IMask(priceBuyInput, {
+    const priceBuyMask = IMask(priceBuyInput, {
         mask: 'R$ num',  // Formato de moeda brasileira
         blocks: {
             num: {
                 mask: Number,
-                thousandsSeparator: '.',  // Separador de milhar
-                radix: ',',               // Separador decimal
-                scale: 2,                 // 2 casas decimais
-                min: 0,                   // Valor mínimo
-                padFractionalZeros: true, // Preenche as casas decimais com 0 se necessário
-
+                thousandsSeparator: '.',
+                radix: ',',
+                scale: 2,
+                min: 0,
+                padFractionalZeros: true,
             },
         },
     });
 
     // Máscara para o preço de venda
     const priceSellInput = document.getElementById('product-price-sell');
-    IMask(priceSellInput, {
-        mask: 'R$ num',  // Formato de moeda brasileira
+    const priceSellMask = IMask(priceSellInput, {
+        mask: 'R$ num',
         blocks: {
             num: {
                 mask: Number,
-                thousandsSeparator: '.',  // Separador de milhar
-                radix: ',',               // Separador decimal
-                scale: 2,                 // 2 casas decimais
-                min: 0,                   // Valor mínimo
-                padFractionalZeros: true, // Preenche as casas decimais com 0 se necessário
-
+                thousandsSeparator: '.',
+                radix: ',',
+                scale: 2,
+                min: 0,
+                padFractionalZeros: true,
             },
         },
     });
 
-    // Máscara para a peso (numérica com 2 casas decimais)
+    // Máscara para o peso (numérica com 2 casas decimais)
     const pesoInput = document.getElementById('product-peso');
-    IMask(pesoInput, {
+    const pesoMask = IMask(pesoInput, {
         mask: Number,
-        thousandsSeparator: '',  // Sem separador de milhar
-        radix: '.',               // Separador decimal
-        scale: 3,                 // Até 2 casas decimais
-        max: 9999.99,             // Valor máximo
-        padFractionalZeros: true, // Preenche as casas decimais com 0 se necessário
+        thousandsSeparator: '',
+        radix: '.',
+        scale: 3,
+        max: 9999.99,
+        padFractionalZeros: true,
     });
 
     // Função para abrir o modal
@@ -115,14 +109,14 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('product-form').addEventListener('submit', (event) => {
         event.preventDefault();
 
-        // Obtém os valores do formulário
+        // Obtém os valores do formulário com a máscara
         const productData = {
             codigo: document.getElementById('product-cod').value,
             nome: document.getElementById('product-name').value,
             descricao: document.getElementById('product-description').value,
-            precoCompra: document.getElementById('product-price-buy').value,
-            precoVenda: document.getElementById('product-price-sell').value,
-            peso: document.getElementById('product-peso').value
+            precoCompra: priceBuyMask.unmaskedValue, // Utiliza unmaskedValue para obter valor sem formatação
+            precoVenda: priceSellMask.unmaskedValue, // Utiliza unmaskedValue para obter valor sem formatação
+            peso: pesoMask.unmaskedValue,            // Utiliza unmaskedValue para obter valor sem formatação
         };
 
         console.log('Dados capturados:', productData); // Verificar se os dados estão corretos
@@ -132,8 +126,6 @@ document.addEventListener('DOMContentLoaded', () => {
             showFeedback('Por favor, preencha todos os campos.', 'warning');
             return;
         }
-
-       
 
         // Obtém o botão de "Cadastrar Produto"
         const submitButton = document.querySelector('button[type="submit"]');

@@ -163,7 +163,8 @@ body {
     flex-direction: column;
     gap: 10px;
     width: auto;
-
+    max-height: 450px;
+    overflow-y: auto;    
 }
 
 .search-input {
