@@ -7,8 +7,8 @@
     /* Ajusta a posição na lateral */
     color: #333;
     border: none;
-    padding: 12px 24px;
-    font-size: 16px;
+    padding: 8px 16px;
+    font-size: 14px;
     cursor: pointer;
     border-radius: 50px;
     background-color: #f4f6f9;
@@ -16,13 +16,13 @@
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     z-index: 1000;
     /* Coloca o botão acima de outros elementos */
 }
 
 .button-back i {
-    font-size: 18px;
+    font-size: 16px;
 }
 
 .button-back:hover {
@@ -47,13 +47,13 @@ body {
 
 
 .pdv-container {
-    width: 90%;
-    height: 700px;
-    max-width: 1200px;
+    width: 85%;
+    height: 600px;
+    max-width: 1000px;
     background-color: #ffffff;
     border-radius: 10px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-    padding: 20px;
+    padding: 15px;
 
     position: absolute;
     /* Garante que ele fique fixo */
@@ -71,25 +71,25 @@ body {
 
 .pdv-header {
     text-align: center;
-    font-size: 24px;
+    font-size: 20px;
     font-weight: bold;
     background-color: #2980b9;
     color: white;
-    padding: 10px;
-    border-radius: 10px 10px 0 0;
-    margin-bottom: 20px;
+    padding: 8px;
+    border-radius: 8px 8px 0 0;
+    margin-bottom: 15px;
 }
 
 .content-section {
     display: flex;
-    gap: 20px;
+    gap: 15px;
     flex: 1;
 }
 
 .cart-container {
-    width: 300px;
+    width: 250px;
     background-color: #F5E1A4;
-    padding: 15px;
+    padding: 12px;
     border: 1px solid #ddd;
     border-radius: 8px;
     display: flex;
@@ -98,12 +98,12 @@ body {
 
 .cart-container h3 {
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     font-family: 'Courier New', Courier, monospace;
 }
 
 .cart-coupons {
-    max-height: 350px;
+    max-height: 300px;
     /* Define a altura máxima */
     overflow-y: auto;
     /* Ativa a barra de rolagem vertical */
@@ -112,14 +112,15 @@ body {
     display: flex;
     flex-direction: column;
     /* Garante que os itens sejam empilhados */
-    gap: 5px;
+    gap: 4px;
     /* Espaçamento entre os itens */
 }
 
 
 
 .coupon {
-    padding: 10px;
+    padding: 8px;
+    font-size: 12px;
     border: 1px solid #333;
     border-style: dashed;
     border-radius: 5px;
@@ -132,22 +133,22 @@ body {
     display: flex;
     justify-content: space-between;
     margin-bottom: 10px;
-    font-size: 14px;
+    font-size: 12px;
 }
 
 .coupon-details {
     display: flex;
     justify-content: space-between;
-    font-size: 14px;
+    font-size: 12px;
 }
 
 .coupon button {
-    margin-top: 10px;
+    margin-top: 8px;
     background-color: #dc3545;
     color: white;
     border: none;
-    padding: 5px 10px;
-    font-size: 12px;
+    padding: 4px 8px;
+    font-size: 10px;
     border-radius: 3px;
     cursor: pointer;
     font-family: 'Courier New', Courier, monospace;
@@ -161,14 +162,15 @@ body {
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
     width: auto;
-    max-height: 450px;
+    max-height: 400px;
     overflow-y: auto;    
 }
 
 .search-input {
-    padding: 10px;
+    padding: 8px;
+    font-size: 12px;
     border: 1px solid #ccc;
     border-radius: 5px;
     width: auto;
@@ -191,7 +193,8 @@ table {
 table th,
 table td {
     text-align: left;
-    padding: 10px;
+    padding: 8px;
+    font-size: 12px;
     border: 1px solid #ddd;
 }
 
@@ -206,14 +209,14 @@ table th {
     padding: 10px;
     background-color: #f0f0f0;
     border-radius: 5px;
-    font-size: 18px;
+    font-size: 16px;
     font-weight: bold;
-    margin-top: 20px;
+    margin-top: 15px;
 }
 
 .totals-section span {
-    margin: 10px;
-    font-size: 30px;
+    margin: 8px;
+    font-size: 24px;
 }
 
 .actions {
@@ -225,13 +228,13 @@ table th {
 .actions button {
     flex: 1;
     margin: 0 5px;
-    padding: 10px 20px;
+    padding: 8px 15px;
     border: none;
     border-radius: 5px;
     background-color: #4caf50;
     color: white;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 14px;
 }
 
 .actions button:hover {
@@ -251,19 +254,19 @@ table th {
 .input-button-wrapper {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     /* Espaço entre o input e o botão */
 }
 
 /* Estilo do input */
 .product-weight {
-    width: 80px;
-    height: 40px;
+    width: 70px;
+    height: 35px;
     /* Define a altura máxima */
-    padding: 5px;
+    padding: 4px;
     border: 1px solid #ccc;
     border-radius: 5px;
-    font-size: 14px;
+    font-size: 12px;
     text-align: center;
     font-family: Arial, sans-serif;
 }
@@ -280,9 +283,9 @@ table th {
     /* Cor verde profissional */
     color: white;
     /* Texto branco */
-    padding: 10px 20px;
+    padding: 8px 16px;
     /* Espaçamento interno */
-    font-size: 16px;
+    font-size: 14px;
     /* Tamanho da fonte */
     border-radius: 5px;
     /* Bordas arredondadas */
@@ -299,9 +302,9 @@ table th {
 }
 
 .add-to-cart-btn i {
-    margin-right: 10px;
+    margin-right: 8px;
     /* Espaçamento entre o ícone e o texto */
-    font-size: 20px;
+    font-size: 18px;
     /* Tamanho do ícone */
 }
 
