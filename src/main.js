@@ -109,6 +109,11 @@ ipcMain.on('estoque-produtos', () => {
 });
 
 // Para a navegação no menu "Estoque de Produtos"
+ipcMain.on('compra-produtos', () => {
+    janela.loadFile(path.join(__dirname, 'pages/compra/index.html'));
+});
+
+// Para a navegação no menu "Venda de Produtos"
 ipcMain.on('venda-produtos', () => {
     console.log('Carregando venda...');
     console.log(path.join(__dirname, 'pages/venda/index.html'));

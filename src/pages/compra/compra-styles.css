@@ -1,0 +1,324 @@
+.button-back {
+    position: fixed;
+    /* Mantém o botão fixo na tela */
+    top: 10px;
+    /* Ajusta a posição no topo */
+    left: 10px;
+    /* Ajusta a posição na lateral */
+    color: #333;
+    border: none;
+    padding: 8px 16px;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 50px;
+    background-color: #f4f6f9;
+    /* Cor de fundo para contraste */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    z-index: 1000;
+    /* Coloca o botão acima de outros elementos */
+}
+
+.button-back i {
+    font-size: 16px;
+}
+
+.button-back:hover {
+    background-color: #7d7e7d;
+    color: #ffffff;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background-color: #f4f6f9;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+
+.pdv-container {
+    width: 85%;
+    height: 600px;
+    max-width: 1000px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    padding: 15px;
+
+    position: absolute;
+    /* Garante que ele fique fixo */
+    top: 50%;
+    /* Posiciona o topo no meio da tela */
+    left: 50%;
+    /* Posiciona o centro no meio da tela */
+    transform: translate(-50%, -50%);
+    /* Centraliza o elemento */
+
+    display: flex;
+    flex-direction: column;
+}
+
+
+.pdv-header {
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    background-color: #2980b9;
+    color: white;
+    padding: 8px;
+    border-radius: 8px 8px 0 0;
+    margin-bottom: 15px;
+}
+
+.content-section {
+    display: flex;
+    gap: 15px;
+    flex: 1;
+}
+
+.cart-container {
+    width: 250px;
+    max-height: 385px;
+    background-color: #F5E1A4;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+}
+
+.cart-container h3 {
+    text-align: center;
+    margin-bottom: 15px;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.cart-coupons {
+    max-height: 300px;
+    /* Define a altura máxima */
+    overflow-y: auto;
+    /* Ativa a barra de rolagem vertical */
+    overflow-x: hidden;
+    /* Evita a barra de rolagem horizontal */
+    display: flex;
+    flex-direction: column;
+    /* Garante que os itens sejam empilhados */
+    gap: 4px;
+    /* Espaçamento entre os itens */
+}
+
+
+
+.coupon {
+    padding: 8px;
+    font-size: 12px;
+    border: 1px solid #333;
+    border-style: dashed;
+    border-radius: 5px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+}
+
+.coupon-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-size: 12px;
+}
+
+.coupon-details {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+}
+
+.coupon button {
+    margin-top: 8px;
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 4px 8px;
+    font-size: 10px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.coupon button:hover {
+    background-color: #c82333;
+}
+
+.search-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: auto;
+    max-height: 380px;
+    overflow-y: auto;    
+}
+
+.search-input {
+    padding: 8px;
+    font-size: 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: auto;
+}
+
+.table-container {
+    flex: 2;
+    width: auto;
+    overflow-y: auto;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table th,
+table td {
+    text-align: left;
+    padding: 8px;
+    font-size: 12px;
+    border: 1px solid #ddd;
+}
+
+table th {
+    background-color: #f0f0f0;
+}
+
+.totals-section {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 10px;
+    background-color: #f0f0f0;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 15px;
+}
+
+.totals-section span {
+    margin: 8px;
+    font-size: 24px;
+}
+
+.actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.actions button {
+    flex: 1;
+    margin: 0 5px;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    background-color: #4caf50;
+    color: white;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.actions button:hover {
+    background-color: #45a049;
+}
+
+.actions button:active {
+    background-color: #3e8e41;
+}
+
+.actions button[data-key]:before {
+    content: attr(data-key) ' - ';
+}
+
+
+/* Contêiner para alinhar o input e o botão na mesma linha */
+.input-button-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    /* Espaço entre o input e o botão */
+}
+
+/* Estilo do input */
+.product-weight {
+    width: 70px;
+    height: 35px;
+    /* Define a altura máxima */
+    padding: 4px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 12px;
+    text-align: center;
+    font-family: Arial, sans-serif;
+}
+
+.product-weight:focus {
+    border-color: #2196f3;
+    box-shadow: 0px 0px 5px rgba(33, 150, 243, 0.5);
+    outline: none;
+}
+
+/* Estilo do botão com ícones */
+.add-to-cart-btn {
+    background-color: #28a745;
+    /* Cor verde profissional */
+    color: white;
+    /* Texto branco */
+    padding: 8px 16px;
+    /* Espaçamento interno */
+    font-size: 14px;
+    /* Tamanho da fonte */
+    border-radius: 5px;
+    /* Bordas arredondadas */
+    border: none;
+    /* Remover borda padrão */
+    display: inline-flex;
+    /* Flexbox para alinhamento dos ícones e texto */
+    align-items: center;
+    /* Alinha os itens no centro */
+    cursor: pointer;
+    /* Cursor de ponteiro para interação */
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    /* Transições suaves */
+}
+
+.add-to-cart-btn i {
+    margin-right: 8px;
+    /* Espaçamento entre o ícone e o texto */
+    font-size: 18px;
+    /* Tamanho do ícone */
+}
+
+.add-to-cart-btn:hover {
+    background-color: #218838;
+    /* Cor verde mais escura no hover */
+    transform: scale(1.05);
+    /* Aumenta o botão levemente ao passar o mouse */
+}
+
+.add-to-cart-btn:focus {
+    outline: none;
+    /* Remove o contorno ao clicar */
+    box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.5);
+    /* Sombra suave ao focar */
+}

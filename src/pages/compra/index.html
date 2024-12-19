@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="compra-styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+
+<body>
+    <!-- Botão de Voltar -->
+    <button id="menu-back" class="button-back">
+        <i class="fas fa-arrow-left"></i> Voltar
+    </button>
+    <script src="compra.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <div class="pdv-container">
+        <div class="pdv-header">G3 PDV - Versão 2.3.0</div>
+
+        <div class="content-section">
+            <div class="cart-container">
+                <h3>Carrinho</h3>
+                <div class="cart-coupons">
+                    <!-- Produtos adicionados ao carrinho aparecerão aqui -->
+                </div>
+            </div>
+
+            <div class="search-container">
+                <input id="search-input" class="search-input" type="text" placeholder="Pesquisar produto...">
+                <div class="table-container">
+                    <table class="product-list">
+                        <thead>
+                            <tr>
+                                <th>Código</th>
+                                <th>Nome</th>
+                                <th>Descrição</th>
+                                <th>Preço Unitário</th>
+                                <th>Peso</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Resultados da pesquisa aparecerão aqui -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="totals-section">
+            <span>Total: R$ 0,00</span>
+        </div>
+
+        <div class="actions">
+            <button id="finalizar-compra" data-key="F1">Finalizar Compra</button>
+            <button id="cancelar-compra" data-key="F2">Cancelar Compra</button>
+        </div>
+    </div>
+</body>
+
+</html>

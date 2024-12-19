@@ -36,6 +36,10 @@ document.getElementById('vendaProdutosButton').addEventListener('click', () => {
     ipcRenderer.send('venda-produtos');
 });
 
+document.getElementById('compraProdutosButton').addEventListener('click', () => {
+    ipcRenderer.send('compra-produtos');
+});
+
 // Função para mostrar o loading no botão
 function toggleButtonLoading(button, isLoading) {
     const spinner = button.querySelector('.spinner');
