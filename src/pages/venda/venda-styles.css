@@ -88,6 +88,7 @@ body {
 
 .cart-container {
     width: 250px;
+    max-height: 385px;
     background-color: #F5E1A4;
     padding: 12px;
     border: 1px solid #ddd;
@@ -164,7 +165,7 @@ body {
     flex-direction: column;
     gap: 8px;
     width: auto;
-    max-height: 400px;
+    max-height: 380px;
     overflow-y: auto;    
 }
 
