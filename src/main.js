@@ -108,10 +108,16 @@ ipcMain.on('estoque-produtos', () => {
     janela.loadFile(path.join(__dirname, 'pages/estoque/index.html'));
 });
 
-// Para a navegação no menu "Estoque de Produtos"
+// Para a navegação no menu "Compra de Produtos"
 ipcMain.on('compra-produtos', () => {
     janela.loadFile(path.join(__dirname, 'pages/compra/index.html'));
 });
+
+// Para a navegação no menu "relatorio vendas"
+ipcMain.on('relatorio-vendas', () => {
+    janela.loadFile(path.join(__dirname, 'pages/relatorioVendas/index.html'));
+});
+
 
 // Para a navegação no menu "Venda de Produtos"
 ipcMain.on('venda-produtos', () => {

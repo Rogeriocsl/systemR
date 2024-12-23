@@ -32,6 +32,10 @@ document.getElementById('estoqueProdutosButton').addEventListener('click', () =>
     ipcRenderer.send('estoque-produtos');
 });
 
+document.getElementById('relatorioVendasButton').addEventListener('click', () => {
+    ipcRenderer.send('relatorio-vendas');
+});
+
 document.getElementById('vendaProdutosButton').addEventListener('click', () => {
     ipcRenderer.send('venda-produtos');
 });

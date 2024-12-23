@@ -116,7 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const pesoTotal = pesoAtualNoCarrinho + peso;
 
             // Verifica se a quantidade/peso total não ultrapassa o disponível
-            if (pesoTotal > pesoMaximo) {
+            if (pesoTotal > pesoMaximo && quantidadeDisponivel > 0) {
                 Swal.fire({
                     icon: 'warning',
                     title: '🚨 Limite de Quantidade Atingido 🚨',
@@ -216,57 +216,44 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Função para finalizar a venda
     function finalizarVenda() {
         if (Object.keys(produtosNoCarrinho).length === 0) {
             Swal.fire({
                 icon: 'warning',
                 title: 'Carrinho Vazio',
-                text: 'Adicione produtos ao carrinho antes de finalizar a venda.',
+                text: 'Adicione produtos ao carrinho antes de finalizar a compra.',
             });
             return;
         }
-
-        // Verificação de estoque antes de confirmar a venda
-        let erroEstoque = false;
-        const produtosParaAtualizar = [];
-
+    
+        // Lista de produtos a atualizar
+        let produtosParaAtualizar = [];
+    
         Object.keys(produtosNoCarrinho).forEach((produtoId) => {
             const pesoNoCarrinho = produtosNoCarrinho[produtoId];
             const produtoRef = ref(database, `produtos/${produtoId}`);
-
+    
             get(produtoRef)
                 .then((snapshot) => {
                     if (snapshot.exists()) {
                         const produto = snapshot.val();
-                        const pesoAtual = parseFloat(produto.peso); // Converte o peso atual para número
-
-                        // Verifica se há estoque suficiente
-                        if (isNaN(pesoAtual) || pesoAtual < pesoNoCarrinho) {
-                            erroEstoque = true;
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Erro de Estoque',
-                                text: `O produto ${produto.nome} não possui peso suficiente em estoque.`,
-                            });
-                        } else {
-                            // Armazena as atualizações de estoque
-                            const novoPeso = pesoAtual - pesoNoCarrinho;
-                            produtosParaAtualizar.push({ produtoId, novoPeso });
-                        }
+                        const pesoAtual = parseFloat(produto.peso); // Peso atual do produto no estoque
+    
+                        // Mesmo que o estoque seja zero, permite a compra
+                        const novoPeso = pesoAtual + pesoNoCarrinho;
+    
+                        // Adiciona a atualização do peso do produto
+                        produtosParaAtualizar.push({ produtoId, novoPeso });
                     }
                 })
                 .catch((error) => {
                     console.error('Erro ao buscar o produto no Firebase:', error);
                 });
         });
-
-        // Se houver erro de estoque, não prosseguir com a venda
-        if (erroEstoque) return;
-
-        // Se o estoque for suficiente, confirma a venda
+    
+        // Exibe a confirmação da compra
         Swal.fire({
-            title: 'Confirmar Venda',
+            title: 'Confirmar Compra',
             text: `Total: R$ ${totalCarrinho.toFixed(2)}`,
             icon: 'question',
             showCancelButton: true,
@@ -274,15 +261,15 @@ document.addEventListener('DOMContentLoaded', () => {
             cancelButtonText: 'Cancelar',
         }).then((result) => {
             if (result.isConfirmed) {
-                // Salvar venda no Firebase
-                const vendasRef = ref(database, 'vendas');
-                const dataHora = new Date().toLocaleString('pt-BR'); // Formato de data e hora pt-BR
-                const vendaDetalhes = Object.keys(produtosNoCarrinho).map((produtoId) => {
+                // Salva a compra no Firebase
+                const comprasRef = ref(database, 'compras');
+                const dataHora = new Date().toLocaleString('pt-BR');
+                const compraDetalhes = Object.keys(produtosNoCarrinho).map((produtoId) => {
                     const produto = produtosNoCarrinho[produtoId];
                     const produtoInfo = cartCoupons.querySelector(`[data-id="${produtoId}"]`);
-                    const nomeProduto = produtoInfo.querySelector('.coupon-header').children[1].textContent.split(':')[1].trim(); // Nome do produto
-                    const quantidadeProduto = produto; // A quantidade no carrinho é o peso (em kg)
-
+                    const nomeProduto = produtoInfo.querySelector('.coupon-header').children[1].textContent.split(':')[1].trim();
+                    const quantidadeProduto = produto;
+    
                     return {
                         produtoId,
                         nome: nomeProduto,
@@ -290,16 +277,16 @@ document.addEventListener('DOMContentLoaded', () => {
                         preco: parseFloat(produtoInfo.querySelector('.coupon-price').textContent.replace('Preço Total: R$', '').trim()),
                     };
                 });
-
-                const novaVenda = {
+    
+                const novaCompra = {
                     dataHora,
-                    produtos: vendaDetalhes,
+                    produtos: compraDetalhes,
                     total: totalCarrinho,
                 };
-
-                // Salva a venda no Firebase
-                push(vendasRef, novaVenda).then(() => {
-                    // Atualizar o peso dos produtos no Firebase após gravar a venda
+    
+                // Salva a compra no Firebase
+                push(comprasRef, novaCompra).then(() => {
+                    // Atualizar o peso dos produtos no Firebase após registrar a compra
                     produtosParaAtualizar.forEach(({ produtoId, novoPeso }) => {
                         const produtoRef = ref(database, `produtos/${produtoId}`);
                         update(produtoRef, { peso: novoPeso.toFixed(3) }) // Atualiza o peso no Firebase
@@ -310,34 +297,35 @@ document.addEventListener('DOMContentLoaded', () => {
                                 console.error('Erro ao atualizar o peso do produto:', error);
                             });
                     });
-
+    
                     Swal.fire({
                         icon: 'success',
-                        title: 'Venda Finalizada',
-                        text: 'A venda foi concluída com sucesso!',
+                        title: 'Compra Finalizada',
+                        text: 'A compra foi concluída com sucesso!',
                     });
-
+    
                     // Limpar carrinho
                     cartCoupons.innerHTML = '';
                     produtosNoCarrinho = {};
                     totalCarrinho = 0;
                     atualizarTotalCarrinho();
-
+    
                     // Limpar o campo de busca e a lista de resultados
                     document.getElementById('search-input').value = ''; // Limpa o campo de busca
                     const listaProdutos = document.querySelector('.product-list tbody');
                     listaProdutos.innerHTML = ''; // Limpa a lista de produtos exibidos
                 }).catch((error) => {
-                    console.error('Erro ao salvar a venda:', error);
+                    console.error('Erro ao salvar a compra:', error);
                     Swal.fire({
                         icon: 'error',
                         title: 'Erro',
-                        text: 'Ocorreu um erro ao finalizar a venda. Tente novamente mais tarde.',
+                        text: 'Ocorreu um erro ao finalizar a compra. Tente novamente mais tarde.',
                     });
                 });
             }
         });
     }
+    
 
     // Função para cancelar a venda
     function cancelarVenda() {
@@ -371,11 +359,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Evento para cancelar a venda
-    document.getElementById('cancelar-venda').addEventListener('click', cancelarVenda); // Botão para cancelar a venda
+    document.getElementById('cancelar-compra').addEventListener('click', cancelarVenda); // Botão para cancelar a venda
 
     // Evento para adicionar ao carrinho
     document.addEventListener('click', adicionarAoCarrinho);
 
     // Evento para finalizar a venda
-    document.getElementById('finalizar-venda').addEventListener('click', finalizarVenda); // Botão para finalizar a venda
+    document.getElementById('finalizar-compra').addEventListener('click', finalizarVenda); // Botão para finalizar a venda
 });
