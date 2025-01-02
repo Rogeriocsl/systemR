@@ -348,6 +348,12 @@ html {
 
 }
 
+#sale-details-content {
+    max-height: 80vh; /* Define uma altura máxima para o conteúdo */
+    overflow-y: auto; /* Adiciona a rolagem vertical quando necessário */
+}
+
+
 
 .toggle-details {
     justify-content: center;    /* Centraliza horizontalmente */

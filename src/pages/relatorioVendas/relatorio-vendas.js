@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let vendasCache = []; // Cache para armazenar vendas
 
+    // Função para carregar as vendas com ou sem filtros
     async function carregarVendas() {
         listaVendas.innerHTML = ''; // Limpa a lista
         listaVendas.appendChild(loader); // Exibe o indicador de carregamento
@@ -30,33 +31,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (snapshot.exists()) {
                 vendasCache = snapshot.val(); // Armazena no cache
+                console.log('Vendas carregadas:', vendasCache); // Verifique os dados carregados
                 listaVendas.innerHTML = ''; // Limpa novamente após carregamento
 
                 Object.keys(vendasCache).forEach((id) => {
                     const venda = vendasCache[id];
                     const dataVenda = new Date(venda.dataHora);
-                    const formattedDate = dataVenda.toLocaleString('pt-BR', {
-                        day: 'numeric', month: 'long', year: 'numeric', hour: 'numeric', minute: 'numeric'
-                    });
 
-                    const totalVenda = venda.produtos.reduce((total, produto) => total + produto.preco * produto.quantidade, 0);
+                    if (isNaN(dataVenda.getTime())) {
+                        console.error('Data inválida para venda ID:', id);
+                    } else {
+                        const formattedDate = dataVenda.toLocaleString('pt-BR', {
+                            day: 'numeric', month: 'long', year: 'numeric', hour: 'numeric', minute: 'numeric'
+                        });
 
-                    const itemVenda = document.createElement('tr');
-                    itemVenda.classList.add('sale-item');
-                    itemVenda.dataset.saleId = id;
+                        const totalVenda = venda.produtos.reduce((total, produto) => total + produto.preco * produto.quantidade, 0);
 
-                    itemVenda.innerHTML = `
-                        <td>${formattedDate}</td>
-                        <td>R$ ${totalVenda.toFixed(2)}</td>
-                        <td>
-                            <button class="toggle-details">
-                                <i class="fa fa-eye"></i> Visualizar Detalhes
-                            </button>
-                        </td>
+                        const itemVenda = document.createElement('tr');
+                        itemVenda.classList.add('sale-item');
+                        itemVenda.dataset.saleId = id;
 
-                    `;
+                        itemVenda.innerHTML = `
+                            <td>${formattedDate}</td>
+                            <td>R$ ${totalVenda.toFixed(2)}</td>
+                            <td>
+                                <button class="toggle-details">
+                                    <i class="fa fa-eye"></i> Visualizar Detalhes
+                                </button>
+                            </td>
+                        `;
 
-                    listaVendas.appendChild(itemVenda);
+                        listaVendas.appendChild(itemVenda);
+                    }
                 });
             } else {
                 listaVendas.innerHTML = '<tr><td colspan="3">Não há vendas registradas.</td></tr>';
@@ -69,10 +75,30 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+
+    // Aplica os filtros de data
+    document.getElementById('apply-filters').addEventListener('click', () => {
+        const startDate = startDateInput.value;
+        const endDate = endDateInput.value;
+
+        carregarVendas(startDate, endDate); // Carregar vendas com filtros aplicados
+    });
+
+    // Exibe feedback
+    function showFeedback(message, type) {
+        const feedbackElement = document.createElement('div');
+        feedbackElement.classList.add('feedback', type);
+        feedbackElement.textContent = message;
+        document.body.appendChild(feedbackElement);
+
+        setTimeout(() => feedbackElement.remove(), 3000); // Remove após 3 segundos
+    }
+
+    // Função para abrir o modal de detalhes
     function abrirModalDetalhes(venda) {
         const modal = document.getElementById('sale-details-modal');
         const modalContent = document.getElementById('sale-details-content');
-
+    
         const detalhesHtml = `
             <table class="modal-table">
                 <thead>
@@ -88,7 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <tr>
                             <td>${produto.nome}</td>
                             <td>R$ ${produto.preco.toFixed(2)}</td>
-                            <td>${produto.quantidade}</td>
+                            <td>${produto.quantidade} KG</td>
                             <td>R$ ${(produto.preco * produto.quantidade).toFixed(2)}</td>
                         </tr>
                     `).join('')}
@@ -101,10 +127,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 </tfoot>
             </table>
         `;
-
+    
         modalContent.innerHTML = detalhesHtml;
         modal.style.display = 'block';
     }
+    
 
     function fecharModal() {
         const modal = document.getElementById('sale-details-modal');
@@ -115,10 +142,23 @@ document.addEventListener('DOMContentLoaded', () => {
         if (event.target.classList.contains('toggle-details')) {
             const saleRow = event.target.closest('tr');
             const saleId = saleRow.dataset.saleId;
+
+            console.log('Sale ID:', saleId); // Verifique o ID da venda
+            console.log('Vendas Cache:', vendasCache); // Verifique o cache de vendas
+
             const venda = vendasCache[saleId]; // Recupera do cache
-            abrirModalDetalhes(venda);
+
+            if (venda) {
+                abrirModalDetalhes(venda); // Abre o modal com os detalhes
+            } else {
+                console.error('Venda não encontrada ou não carregada.');
+                showFeedback('Erro ao carregar os detalhes da venda.', 'error');
+            }
         }
     });
+
+
+
 
     document.querySelector('.close-button').addEventListener('click', fecharModal);
 
@@ -127,6 +167,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (event.target === modal) fecharModal();
     });
 
-    carregarVendas(); // Carrega vendas ao iniciar
+    // Carregar as vendas ao iniciar
+    carregarVendas();
 });
+
 
