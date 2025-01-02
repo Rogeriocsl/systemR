@@ -338,12 +338,40 @@ html {
 #sale-details-modal table th {
     background-color: #007bff;
     font-weight: bold;
-    color:#000
+    color:#fff;
 }
 
 #sale-details-modal table tfoot {
     background-color: #007bff;
     font-weight: bold;
+    color:#fff;
+
+}
+
+
+.toggle-details {
+    justify-content: center;    /* Centraliza horizontalmente */
+    padding: 10px 20px;         /* Adiciona algum espaçamento ao redor do texto e ícone */
+    background-color: #4CAF50;  /* Cor de fundo */
+    color: white;               /* Cor do texto */
+    border: none;               /* Remover borda */
+    cursor: pointer;            /* Cursor de pointer para indicar que é clicável */
+    font-size: 16px;             /* Tamanho da fonte */
+    border-radius: 5px;         /* Bordas arredondadas */
+    font-weight: bold;
+}
+
+
+
+
+.toggle-details i {
+    font-size: 18px; /* Tamanho do ícone */
+    color: #ffffff;  /* Cor do ícone */
+    margin-right: 8px; /* Espaçamento à direita do ícone */
+}
+
+.toggle-details:hover i {
+    color: #063464; /* Cor do ícone ao passar o mouse */
 }
 
 
