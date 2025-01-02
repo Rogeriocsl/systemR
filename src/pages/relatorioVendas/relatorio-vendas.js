@@ -2,6 +2,8 @@ const { ipcRenderer } = require('electron');
 const { database } = require('../../firebaseConfig');
 const { get, ref } = require('firebase/database');
 const { parse } = require('date-fns');
+const { format, parseISO } = require('date-fns');
+const { ptBR } = require('date-fns/locale');
 const applyFiltersButton = document.getElementById('apply-filters');
 const startDateInput = document.getElementById('start-date');
 const endDateInput = document.getElementById('end-date');
@@ -21,7 +23,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let vendasCache = []; // Cache para armazenar vendas
 
     // Função para carregar as vendas com ou sem filtros
-    async function carregarVendas() {
+    // Atualizando a função carregarVendas para parsear corretamente a data
+    async function carregarVendas(startDate = null, endDate = null) {
         listaVendas.innerHTML = ''; // Limpa a lista
         listaVendas.appendChild(loader); // Exibe o indicador de carregamento
 
@@ -36,14 +39,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 Object.keys(vendasCache).forEach((id) => {
                     const venda = vendasCache[id];
-                    const dataVenda = new Date(venda.dataHora);
+
+                    // Ajuste para parsear a data no formato 'dd/MM/yyyy, HH:mm:ss'
+                    const dataVenda = parse(venda.dataHora, 'dd/MM/yyyy, HH:mm:ss', new Date());
+
+                    // Verificar se a data está dentro do intervalo de filtros
+                    if (startDate && endDate) {
+                        const start = parse(startDate, 'yyyy-MM-dd', new Date());
+                        const end = parse(endDate, 'yyyy-MM-dd', new Date());
+                        if (dataVenda < start || dataVenda > end) return; // Pula a venda se estiver fora do intervalo
+                    }
 
                     if (isNaN(dataVenda.getTime())) {
                         console.error('Data inválida para venda ID:', id);
                     } else {
-                        const formattedDate = dataVenda.toLocaleString('pt-BR', {
-                            day: 'numeric', month: 'long', year: 'numeric', hour: 'numeric', minute: 'numeric'
-                        });
+                        // Formatar a data corretamente
+                        const formattedDate = format(dataVenda, "dd 'de' MMMM 'de' yyyy 'às' HH:mm", { locale: ptBR });
 
                         const totalVenda = venda.produtos.reduce((total, produto) => total + produto.preco * produto.quantidade, 0);
 
@@ -52,14 +63,14 @@ document.addEventListener('DOMContentLoaded', () => {
                         itemVenda.dataset.saleId = id;
 
                         itemVenda.innerHTML = `
-                            <td>${formattedDate}</td>
-                            <td>R$ ${totalVenda.toFixed(2)}</td>
-                            <td>
-                                <button class="toggle-details">
-                                    <i class="fa fa-eye"></i> Visualizar Detalhes
-                                </button>
-                            </td>
-                        `;
+                        <td>${formattedDate}</td>
+                        <td>R$ ${totalVenda.toFixed(2)}</td>
+                        <td>
+                            <button class="toggle-details">
+                                <i class="fa fa-eye"></i> Visualizar Detalhes
+                            </button>
+                        </td>
+                    `;
 
                         listaVendas.appendChild(itemVenda);
                     }
@@ -84,6 +95,16 @@ document.addEventListener('DOMContentLoaded', () => {
         carregarVendas(startDate, endDate); // Carregar vendas com filtros aplicados
     });
 
+
+
+    // Aplica os filtros de data
+    document.getElementById('apply-filters').addEventListener('click', () => {
+        const startDate = startDateInput.value;
+        const endDate = endDateInput.value;
+
+        carregarVendas(startDate, endDate); // Carregar vendas com filtros aplicados
+    });
+
     // Exibe feedback
     function showFeedback(message, type) {
         const feedbackElement = document.createElement('div');
@@ -98,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function abrirModalDetalhes(venda) {
         const modal = document.getElementById('sale-details-modal');
         const modalContent = document.getElementById('sale-details-content');
-    
+
         const detalhesHtml = `
             <table class="modal-table">
                 <thead>
@@ -127,11 +148,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 </tfoot>
             </table>
         `;
-    
+
         modalContent.innerHTML = detalhesHtml;
         modal.style.display = 'block';
     }
-    
+
 
     function fecharModal() {
         const modal = document.getElementById('sale-details-modal');
