@@ -1,6 +1,12 @@
 const { ipcRenderer } = require('electron');
 const { database } = require('../../firebaseConfig');
 const { get, ref } = require('firebase/database');
+const { parse } = require('date-fns');
+const applyFiltersButton = document.getElementById('apply-filters');
+const startDateInput = document.getElementById('start-date');
+const endDateInput = document.getElementById('end-date');
+
+let vendasCache = []; // Armazena todas as vendas carregadas
 
 document.getElementById('menu-back').addEventListener('click', () => {
     ipcRenderer.send('menu-principal');
