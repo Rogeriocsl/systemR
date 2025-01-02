@@ -29,14 +29,6 @@
         <section class="filters-container">
             <input type="text" id="search-input" class="search-input" placeholder="Pesquisar produto...">
 
-            <select id="category-filter" class="filter-select">
-                <option value="">Selecione a Categoria</option>
-                <option value="eletronicos">Eletrônicos</option>
-                <option value="roupas">Roupas</option>
-                <option value="alimentos">Alimentos</option>
-                <option value="moveis">Móveis</option>
-            </select>
-
             <input type="date" id="date-filter" class="filter-input">
 
             <button id="apply-filters" class="filter-button">Aplicar Filtros</button>
@@ -54,13 +46,48 @@
                     </tr>
                 </thead>
                 <tbody class="sales-list">
-                    <!-- As vendas serão inseridas aqui -->
+                    <tr>
+                        <td>2024-12-01</td>
+                        <td>Produto A</td>
+                        <td>R$ 100,00</td>
+                        <td>
+                            <button class="show-details-button"
+                                data-date="2024-12-01"
+                                data-product="Produto A"
+                                data-total="R$ 100,00"
+                                data-description="Venda do Produto A">
+                                Mostrar Detalhes
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>2024-12-02</td>
+                        <td>Produto B</td>
+                        <td>R$ 150,00</td>
+                        <td>
+                            <button class="show-details-button"
+                                data-date="2024-12-02"
+                                data-product="Produto B"
+                                data-total="R$ 150,00"
+                                data-description="Venda do Produto B">
+                                Mostrar Detalhes
+                            </button>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
-            
-            
         </section>
+    </div>
 
+    <!-- Modal de Detalhes -->
+    <div id="sale-details-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2>Detalhes da Venda</h2>
+            <div id="sale-details-content">
+                <!-- Os detalhes das vendas serão carregados aqui -->
+            </div>
+        </div>
     </div>
 
     <script src="relatorio-vendas.js"></script>

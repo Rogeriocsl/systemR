@@ -30,7 +30,7 @@ html {
 
 /* Cabeçalho */
 .header {
-    background-color: #3498db;
+    background-color: #007bff;
     color: #fff;
     padding: 20px 0; /* Ajustado o padding para melhor aparência */
     text-align: center;
@@ -92,7 +92,7 @@ html {
 .search-input:focus,
 .filter-select:focus,
 .filter-input:focus {
-    border-color: #3498db;
+    border-color: #007bff;
     outline: none;
 }
 
@@ -238,3 +238,70 @@ html {
         overflow-x: auto;
     }
 }
+/* Modal de Detalhes */
+.modal {
+    display: none; /* Oculta o modal por padrão */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5); /* Fundo semi-transparente */
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 10% auto; /* Centraliza verticalmente */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; /* Largura do modal */
+    max-width: 800px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.close-button {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+
+#sale-details-modal table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 16px;
+    text-align: left;
+}
+
+#sale-details-modal table th, 
+#sale-details-modal table td {
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+}
+
+#sale-details-modal table th {
+    background-color: #007bff;
+    font-weight: bold;
+    color:#000
+}
+
+#sale-details-modal table tfoot {
+    background-color: #007bff;
+    font-weight: bold;
+}
+
+
+
