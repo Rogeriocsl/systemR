@@ -183,24 +183,31 @@ document.addEventListener('DOMContentLoaded', () => {
     // Enviar o formulário de edição
     editForm.addEventListener('submit', function (event) {
         event.preventDefault();
-
-
+    
+        // Função para remover o prefixo "R$"
+        function removerPrefixoReal(valor) {
+            if (typeof valor === 'string') {
+                // Remove apenas o prefixo "R$" e possíveis espaços em volta
+                return valor.replace(/^R\$\s*/, '');
+            }
+            return valor;
+        }
+    
         const updatedProduct = {
             codigo: document.getElementById('product-cod').value,
             nome: document.getElementById('product-name').value,
             descricao: document.getElementById('product-description').value,
-            precoCompra: document.getElementById('purchase-price').value,
-            precoVenda: document.getElementById('sale-price').value,
+            precoCompra: removerPrefixoReal(document.getElementById('purchase-price').value),
+            precoVenda: removerPrefixoReal(document.getElementById('sale-price').value),
             peso: document.getElementById('weight').value,
         };
-
+    
         const productId = this.dataset.productId;
-
+    
         // Função para salvar o histórico de alterações
         function salvarHistorico(productId, originalData, updatedData) {
-            const historyRef = ref(database, 'product-history/' + productId); // Local de armazenamento do histórico
-
-            // Verifique se o nó 'product-history' e o ID do produto estão corretos
+            const historyRef = ref(database, 'product-history/' + productId);
+    
             push(historyRef, {
                 date: new Date().toISOString(),
                 originalData: originalData,
@@ -211,14 +218,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.error("Erro ao salvar histórico:", error);
             });
         }
-
+    
         // Salvar o histórico antes de atualizar
         const productRef = ref(database, 'produtos/' + productId);
         get(productRef).then((snapshot) => {
             const originalData = snapshot.val();
             if (originalData) {
-                salvarHistorico(productId, originalData, updatedProduct); // Salvar histórico
-
+                salvarHistorico(productId, originalData, updatedProduct);
+    
                 // Atualizar os dados do produto no Firebase
                 update(productRef, updatedProduct).then(() => {
                     showFeedback("Produto atualizado.", 'success');
@@ -231,10 +238,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 showFeedback("Erro ao recuperar o produto. Tente novamente.", 'error');
             }
         });
-
+    
         // Fechar o modal
         editModal.style.display = 'none';
-
+    
         // Atualizar a tabela com os novos dados
         const updatedRow = document.querySelector(`[data-product-id="${productId}"]`);
         updatedRow.cells[0].innerText = updatedProduct.codigo;
@@ -244,7 +251,7 @@ document.addEventListener('DOMContentLoaded', () => {
         updatedRow.cells[4].innerText = updatedProduct.precoVenda;
         updatedRow.cells[5].innerText = updatedProduct.peso;
     });
-
+    
 
 
     // Excluir produto
