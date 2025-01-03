@@ -8,40 +8,17 @@ document.getElementById('menu-back').addEventListener('click', () => {
 });
 
 document.addEventListener('DOMContentLoaded', () => {
+    let produtosCompleto = {}; // Variável para armazenar todos os produtos
+
     // Função para carregar os produtos do Firebase
     function carregarProdutos() {
         const produtosRef = ref(database, 'produtos');
-
+    
         get(produtosRef)
             .then((snapshot) => {
                 if (snapshot.exists()) {
-                    const produtos = snapshot.val();
-                    const listaProdutos = document.querySelector('.product-list');
-                    listaProdutos.innerHTML = '';
-
-                    Object.keys(produtos).forEach((id) => {
-                        const produto = produtos[id];
-                        const itemProduto = document.createElement('tr');
-                        itemProduto.classList.add('product-item');
-                        itemProduto.dataset.productId = id;
-                        itemProduto.innerHTML = `
-                            <td>${produto.codigo}</td>
-                            <td>${produto.nome}</td>
-                            <td>${produto.descricao}</td>
-                            <td>${produto.precoCompra}</td>
-                            <td>${produto.precoVenda}</td>
-                            <td>${produto.peso} kg</td>
-                            <td>
-                                <button class="edit-btn">
-                                    <i class="fas fa-edit edit-btn"></i>
-                                </button>
-                                <button class="delete-btn">
-                                    <i class="fas fa-trash-alt delete-btn"></i>
-                                </button>
-                            </td>
-                        `;
-                        listaProdutos.appendChild(itemProduto);
-                    });
+                    produtosCompleto = snapshot.val(); // Armazena todos os produtos
+                    exibirProdutos(produtosCompleto, 10); // Exibe até 10 produtos inicialmente
                 } else {
                     const listaProdutos = document.querySelector('.product-list');
                     listaProdutos.innerHTML = '<tr class="no-products"><td colspan="6">Não há produtos cadastrados.</td></tr>';
@@ -53,31 +30,61 @@ document.addEventListener('DOMContentLoaded', () => {
             });
     }
 
+    // Função para exibir produtos (com limitação opcional)
+    function exibirProdutos(produtos, limite = null) {
+        const listaProdutos = document.querySelector('.product-list');
+        listaProdutos.innerHTML = '';
+
+        let contador = 0;
+
+        Object.keys(produtos).forEach((id) => {
+            if (limite && contador >= limite) return; // Respeita o limite de produtos exibidos
+
+            const produto = produtos[id];
+            const itemProduto = document.createElement('tr');
+            itemProduto.classList.add('product-item');
+            itemProduto.dataset.productId = id;
+            itemProduto.innerHTML = `
+                <td>${produto.codigo}</td>
+                <td>${produto.nome}</td>
+                <td>${produto.descricao}</td>
+                <td>${produto.precoCompra}</td>
+                <td>${produto.precoVenda}</td>
+                <td>${produto.peso} kg</td>
+                <td>
+                    <button class="edit-btn">
+                        <i class="fas fa-edit edit-btn"></i>
+                    </button>
+                    <button class="delete-btn">
+                        <i class="fas fa-trash-alt delete-btn"></i>
+                    </button>
+                </td>
+            `;
+            listaProdutos.appendChild(itemProduto);
+            contador++;
+        });
+
+        if (contador === 0) {
+            listaProdutos.innerHTML = '<tr class="no-products"><td colspan="6">Não há produtos cadastrados.</td></tr>';
+        }
+    }
+
     // Função para filtrar produtos baseado na pesquisa
     function filtrarProdutos() {
         const searchValue = document.getElementById('search-input').value.toLowerCase();
-        const rows = document.querySelectorAll('.product-item'); // Seleciona todas as linhas da tabela
-    
-        rows.forEach((row) => {
-            let found = false; // Variável para determinar se algum campo da linha corresponde à pesquisa
-    
-            // Percorre todas as células da linha e verifica se alguma contém o valor da pesquisa
-            const cells = row.querySelectorAll('td');
-            cells.forEach((cell) => {
-                if (cell.textContent.toLowerCase().includes(searchValue)) {
-                    found = true; // Se encontrar algum valor correspondente, marca como encontrado
-                }
-            });
-    
-            // Exibe ou esconde a linha com base na pesquisa
-            if (found) {
-                row.style.display = ''; // Exibe a linha
-            } else {
-                row.style.display = 'none'; // Esconde a linha
-            }
-        });
+
+        // Filtra os produtos na lista completa
+        const produtosFiltrados = Object.fromEntries(
+            Object.entries(produtosCompleto).filter(([id, produto]) =>
+                Object.values(produto).some((campo) =>
+                    campo.toString().toLowerCase().includes(searchValue)
+                )
+            )
+        );
+
+        // Exibe os produtos filtrados sem limite
+        exibirProdutos(produtosFiltrados);
     }
-    
 
     // Adiciona o evento de input ao campo de pesquisa
     document.getElementById('search-input').addEventListener('input', filtrarProdutos);
