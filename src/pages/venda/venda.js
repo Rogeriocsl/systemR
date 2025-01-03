@@ -285,12 +285,14 @@ function finalizarVenda() {
                 const produtoInfo = cartCoupons.querySelector(`[data-id="${produtoId}"]`);
                 const nomeProduto = produtoInfo.querySelector('.coupon-header').children[1].textContent.split(':')[1].trim(); // Nome do produto
                 const quantidadeProduto = produto; // A quantidade no carrinho é o peso (em kg)
+                const precoUnitario = parseFloat(produtoInfo.querySelector('.coupon-price').textContent.replace('Preço Total: R$', '').trim()) / quantidadeProduto;
 
                 return {
                     produtoId,
                     nome: nomeProduto,
                     quantidade: quantidadeProduto,
-                    preco: parseFloat(produtoInfo.querySelector('.coupon-price').textContent.replace('Preço Total: R$', '').trim()),
+                    preco: precoUnitario,
+                    total: parseFloat(produtoInfo.querySelector('.coupon-price').textContent.replace('Preço Total: R$', '').trim()),
                 };
             });
 

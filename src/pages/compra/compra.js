@@ -269,12 +269,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     const produtoInfo = cartCoupons.querySelector(`[data-id="${produtoId}"]`);
                     const nomeProduto = produtoInfo.querySelector('.coupon-header').children[1].textContent.split(':')[1].trim();
                     const quantidadeProduto = produto;
-    
+
+                    const precoUnitario = parseFloat(produtoInfo.querySelector('.coupon-price').textContent.replace('Preço Total: R$', '').trim()) / quantidadeProduto;
                     return {
                         produtoId,
                         nome: nomeProduto,
                         quantidade: quantidadeProduto,
-                        preco: parseFloat(produtoInfo.querySelector('.coupon-price').textContent.replace('Preço Total: R$', '').trim()),
+                        preco: precoUnitario,
+                        total: parseFloat(produtoInfo.querySelector('.coupon-price').textContent.replace('Preço Total: R$', '').trim()),
                     };
                 });
     

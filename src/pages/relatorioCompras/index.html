@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="relatorio-compras-styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>Relatório de Compras</title>
+</head>
+
+<body>
+    <div class="container">
+
+        <!-- Mensagem de feedback -->
+        <div id="feedback-message" class="feedback" style="display: none;"></div>
+
+        <!-- Botão de Voltar -->
+        <button id="menu-back" class="button-back">
+            <i class="fas fa-arrow-left"></i> Voltar
+        </button>
+
+        <!-- Cabeçalho -->
+        <header class="header">
+            <h1>Relatório de Compras</h1>
+        </header>
+
+        <!-- Filtros e Pesquisa -->
+        <section class="filters-container">
+            <input type="date" id="start-date" class="filter-input">
+            <input type="date" id="end-date" class="filter-input">
+            <button id="apply-filters" class="filter-button">Aplicar Filtros</button>
+        </section>
+
+        <!-- Tabela de Compras -->
+        <section class="purchases-report">
+            <table class="product-table">
+                <thead>
+                    <tr>
+                        <th>Data da Compra</th>
+                        <th>Total da Compra</th>
+                        <th>Detalhes</th>
+                    </tr>
+                </thead>
+                <tbody class="purchases-list">
+
+                </tbody>
+            </table>
+        </section>
+    </div>
+
+    <!-- Modal de Detalhes -->
+    <div id="purchase-details-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2>Detalhes da Compra</h2>
+            <div id="purchase-details-content">
+                <!-- Os detalhes das compras serão carregados aqui -->
+            </div>
+        </div>
+    </div>
+
+    <script src="relatorio-compras.js"></script>
+</body>
+
+</html>

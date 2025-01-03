@@ -36,6 +36,16 @@ document.getElementById('relatorioVendasButton').addEventListener('click', () =>
     ipcRenderer.send('relatorio-vendas');
 });
 
+document.addEventListener('DOMContentLoaded', () => {
+    const relatorioComprasButton = document.getElementById('relatorioComprasButton');
+    if (relatorioComprasButton) {
+        relatorioComprasButton.addEventListener('click', () => {
+            ipcRenderer.send('relatorio-compras');
+        });
+    }
+});
+
+
 document.getElementById('vendaProdutosButton').addEventListener('click', () => {
     ipcRenderer.send('venda-produtos');
 });

@@ -117,7 +117,12 @@ ipcMain.on('compra-produtos', () => {
 ipcMain.on('relatorio-vendas', () => {
     janela.loadFile(path.join(__dirname, 'pages/relatorioVendas/index.html'));
 });
+ipcMain.on('relatorio-compras', () => {
+    console.log('Carregando compras...');
+    console.log(path.join(__dirname, 'pages/relatorioCompras/index.html'));
+    janela.loadFile(path.join(__dirname, 'pages/relatorioCompras/index.html'));
 
+});
 
 // Para a navegação no menu "Venda de Produtos"
 ipcMain.on('venda-produtos', () => {
